@@ -1,4 +1,4 @@
-# suplo_project_8_12_2020
+# suplo_project
 
 A new Flutter project.
 
