@@ -8,7 +8,6 @@ import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.da
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.provider.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/collection.card.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/product.widget.dart';
-import 'package:suplo_project_8_12_2020/sharedPref.dart';
 
 class CollectionsWidget extends StatefulWidget {
   String link;
@@ -22,7 +21,6 @@ class CollectionsWidget extends StatefulWidget {
 class _CollectionsWidgetState extends State<CollectionsWidget> {
   CollectionModel collection;
   Products products;
-  SharedPref sharedPref = SharedPref();
 
   @override
   void initState() {

@@ -17,7 +17,6 @@ import 'package:suplo_project_8_12_2020/app/theme/product/components/product.inf
 import 'package:suplo_project_8_12_2020/app/theme/product/components/product.seen.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:suplo_project_8_12_2020/sharedPref.dart';
 
 class ProductWidget extends StatefulWidget {
   Products products;
@@ -30,7 +29,6 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   ProductModel productModel;
-  SharedPref sharedPref = SharedPref();
   List<Options> option;
   List<ProductModel> products_save = [];
   //List<ProductModel> reverseSave = products_save.reversed.toList();
