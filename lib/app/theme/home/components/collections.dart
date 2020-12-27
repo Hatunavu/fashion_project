@@ -2,23 +2,22 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:localstorage/localstorage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.provider.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/collection.card.dart';
+import 'package:suplo_project_8_12_2020/app/theme/collection/collection.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/product.widget.dart';
 
-class CollectionsWidget extends StatefulWidget {
+class Collections extends StatefulWidget {
   String link;
 
-  CollectionsWidget({this.link});
+  Collections({this.link});
 
   @override
   _CollectionsWidgetState createState() => _CollectionsWidgetState();
 }
 
-class _CollectionsWidgetState extends State<CollectionsWidget> {
+class _CollectionsWidgetState extends State<Collections> {
   CollectionModel collection;
   Products products;
 
@@ -56,11 +55,19 @@ class _CollectionsWidgetState extends State<CollectionsWidget> {
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  'Xem tất cả>',
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CollectionWidget(
+                              collection: collection,
+                            )));
+                  },
+                  child: Text(
+                    'Xem tất cả>',
+                    style: TextStyle(color: Colors.grey, fontSize: 15),
+                  ),
                 )
               ],
             ),
@@ -69,7 +76,7 @@ class _CollectionsWidgetState extends State<CollectionsWidget> {
             height: 20,
           ),
           Container(
-            height: 360,
+            height: 350,
             child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: collection != null && collection.products.isNotEmpty

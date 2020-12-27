@@ -49,7 +49,7 @@ class _NewsState extends State<News> {
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'Xem tất cả>',

@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverList(
               delegate: SliverChildListDelegate([
-            CollectionsWidget(
+            Collections(
                 link:
                     'https://suplo-fashion.myharavan.com/collections/all?view=smb.json'),
             MidProd(),

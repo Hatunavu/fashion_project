@@ -8,18 +8,22 @@ class CollectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
       child: AspectRatio(
-        aspectRatio: 1.45 / 3,
+        aspectRatio: 1.57 / 3,
         child: Column(
           children: [
             Image.network(product.featuredImage),
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 10),
               child: Column(
                 children: [
                   Text(
                     '${product.title}',
                     style: TextStyle(fontSize: 17),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(
                     height: 10,
@@ -27,12 +31,13 @@ class CollectionCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                          flex: 2,
+                          flex: 3,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 '${product.compareAtPriceFormat}',
+                                maxLines: 1,
                                 style: TextStyle(
                                     color: Colors.grey,
                                     decoration: TextDecoration.lineThrough),
@@ -44,7 +49,11 @@ class CollectionCard extends StatelessWidget {
                               )
                             ],
                           )),
-                      Expanded(child: Icon(Icons.add_circle_outline))
+                      Expanded(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [Icon(Icons.add_circle_outline)],
+                      ))
                     ],
                   ),
                 ],
@@ -53,9 +62,8 @@ class CollectionCard extends StatelessWidget {
           ],
         ),
       ),
-      color: Colors.transparent,
+      color: Colors.white,
       elevation: 0,
-      margin: EdgeInsets.only(right: 10),
     );
   }
 }

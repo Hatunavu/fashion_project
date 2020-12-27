@@ -215,7 +215,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               SliverList(
                   delegate: SliverChildListDelegate([
                 Padding(
-                  padding: EdgeInsets.only(bottom: 60),
+                  padding: EdgeInsets.only(bottom: 70),
                   child: Column(
                     children: [
                       ProductInfor(

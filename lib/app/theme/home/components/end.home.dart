@@ -48,7 +48,7 @@ class _EndHomeState extends State<EndHome> {
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'Xem tất cả>',
@@ -61,7 +61,7 @@ class _EndHomeState extends State<EndHome> {
             height: 20,
           ),
           Container(
-            height: 360,
+            height: 350,
             child: ListView(
                 scrollDirection: Axis.horizontal,
                 children:
@@ -74,7 +74,7 @@ class _EndHomeState extends State<EndHome> {
                         : []),
           ),
           Container(
-            height: 360,
+            height: 350,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children:

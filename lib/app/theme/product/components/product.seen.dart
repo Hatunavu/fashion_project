@@ -49,7 +49,7 @@ class _ProductSeenState extends State<ProductSeen> {
             height: 20,
           ),
           Container(
-            height: 360,
+            height: 350,
             child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: products != null && products.isNotEmpty

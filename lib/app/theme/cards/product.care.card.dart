@@ -8,8 +8,10 @@ class ProductCareCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
       child: AspectRatio(
-        aspectRatio: 1.45 / 3,
+        aspectRatio: 1.57 / 3,
         child: Column(
           children: [
             Image.network(product.featuredImage),
@@ -19,6 +21,8 @@ class ProductCareCard extends StatelessWidget {
                 children: [
                   Text(
                     '${product.title}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 17),
                   ),
                   SizedBox(
@@ -53,9 +57,8 @@ class ProductCareCard extends StatelessWidget {
           ],
         ),
       ),
-      color: Colors.transparent,
+      color: Colors.white,
       elevation: 0,
-      margin: EdgeInsets.only(right: 10),
     );
   }
 }

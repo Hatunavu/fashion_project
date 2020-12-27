@@ -61,7 +61,7 @@ class _ProductCareState extends State<ProductCare> {
             height: 20,
           ),
           Container(
-            height: 360,
+            height: 350,
             child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: collection != null && collection.products.isNotEmpty
