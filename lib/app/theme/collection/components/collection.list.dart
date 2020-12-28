@@ -12,7 +12,7 @@ class CollectionList extends StatelessWidget {
       children: [
         Container(
           padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 0),
-          margin: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+          margin: EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 10),
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -21,8 +21,9 @@ class CollectionList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                  height: 70,
-                  width: 70,
+                  height: 60,
+                  width: 60,
+                  margin: EdgeInsets.only(right: 10),
                   child: Image(
                     image: products?.featuredImage != null &&
                             products?.featuredImage != ''
@@ -30,61 +31,10 @@ class CollectionList extends StatelessWidget {
                         : Text('No result'),
                     fit: BoxFit.cover,
                   )),
-
-              // Stack(
-              //   overflow: Overflow.visible,
-              //   children: [
-              //     InkWell(
-              //       onTap: () {
-              //         Navigator.of(context).push(MaterialPageRoute(
-              //             builder: (context) => ProductWidget()));
-              //       },
-              //       // child:
-              //       // FadeInImage(
-              //       //   fadeInDuration: Duration(milliseconds: 100),
-              //       //   fadeOutDuration: Duration(milliseconds: 100),
-              //       //   height: 80,
-              //       //   width: 70,
-              //       //   image: products?.featuredImage != null &&
-              //       //           products?.featuredImage != ''
-              //       //       ? NetworkImage(products.featuredImage)
-              //       //       : Text('No result'),
-              //       //
-              //     ),
-              //     products?.sale != null && products?.sale != '-0%'
-              //         ? Positioned(
-              //             bottom: 2,
-              //             left: -10,
-              //             child: Container(
-              //                 width: 30,
-              //                 height: 18,
-              //                 alignment: Alignment.center,
-              //                 decoration: BoxDecoration(
-              //                     color: Color(0xFF484105),
-              //                     borderRadius: BorderRadius.only(
-              //                         topRight: Radius.circular(4),
-              //                         bottomRight: Radius.circular(4))),
-              //                 child: Text(
-              //                   products?.sale?.toString(),
-              //                   style: TextStyle(
-              //                       color: Colors.white,
-              //                       fontWeight: FontWeight.bold,
-              //                       fontSize: 11),
-              //                   textAlign: TextAlign.center,
-              //                 )))
-              //         : Container(),
-              //   ],
-              // ),
-
               SizedBox(
                 height: 10,
               ),
               Expanded(
-                //   child: InkWell(
-                // onTap: () {
-                //   Navigator.of(context).push(
-                //       MaterialPageRoute(builder: (context) => ProductWidget()));
-                // },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -97,11 +47,37 @@ class CollectionList extends StatelessWidget {
                     SizedBox(
                       height: 3,
                     ),
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: products?.priceFormat + ' ' ?? 'No rsult',
+                          style: TextStyle(
+                              color: Color(0xFF86744e),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14)),
+                      TextSpan(
+                          text: products?.compareAtPriceFormat ?? 'No result',
+                          style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: Color(0xFF333333).withOpacity(.6),
+                            fontSize: 10,
+                          ))
+                    ]))
                   ],
                 ),
               )
-              // )
             ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: EdgeInsets.only(right: 15, top: 59),
+            child: Icon(
+              Icons.add_circle_outline,
+              color: Colors.grey,
+              size: 22,
+            ),
           ),
         )
       ],

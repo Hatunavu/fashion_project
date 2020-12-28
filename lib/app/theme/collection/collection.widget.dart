@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
@@ -15,6 +16,16 @@ class CollectionWidget extends StatefulWidget {
 }
 
 class _CollectionWidgetState extends State<CollectionWidget> {
+  final List<String> sort = [
+    'Mặc định',
+    'Bán chạy',
+    'Gía tăng dần',
+    'Gía giảm dần',
+    'Mới nhất',
+    'Cũ nhất',
+    'Từ A-Z',
+    'Từ Z-A'
+  ];
   ScrollController _scrollController = ScrollController();
   String _viewType = 'grid';
   _switchView(String view) {
@@ -105,7 +116,13 @@ class _CollectionWidgetState extends State<CollectionWidget> {
             child: Icon(MdiIcons.sortAlphabeticalAscending,
                 size: 18, color: Color(0xFF333333).withOpacity(.6)),
             padding: const EdgeInsets.all(0),
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return buildSort();
+                  });
+            },
           ),
         ),
         Container(
@@ -217,15 +234,12 @@ class _CollectionWidgetState extends State<CollectionWidget> {
 
   Widget builGrid(
     List<Products> products,
-    /*double widthContent*/
   ) {
     return Padding(
       padding: EdgeInsets.only(left: 15, right: 15),
       child: CustomScrollView(
         controller: _scrollController,
-        // shrinkWrap: true,
         scrollDirection: Axis.vertical,
-        //physics: AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(
             child: SizedBox(
@@ -236,7 +250,6 @@ class _CollectionWidgetState extends State<CollectionWidget> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 1.54 / 3,
-              //mainAxisSpacing: 8
             ),
             delegate: SliverChildListDelegate(products
                 .map((product) => InkWell(
@@ -262,10 +275,7 @@ class _CollectionWidgetState extends State<CollectionWidget> {
         controller: _scrollController,
         itemCount: products.length,
         padding: EdgeInsets.only(top: 10, bottom: 30),
-        // addAutomaticKeepAlives: true,
         scrollDirection: Axis.vertical,
-        // physics:AlwaysScrollableScrollPhysics(),
-
         itemBuilder: (context, index) {
           return (index == products.length - 1)
               ? Column(
@@ -281,12 +291,55 @@ class _CollectionWidgetState extends State<CollectionWidget> {
                               products: e,
                             ),
                           ))
-                      .toList()
-                  // [
-                  //   CollectionList(products: products[index],)
-                  // ],
-                  )
+                      .toList())
               : Container();
         });
+  }
+
+  Widget buildSort() {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Sắp xếp',
+          style: TextStyle(color: Colors.black, fontSize: 14),
+        ),
+        actions: [
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              child: Text(
+                'Xong',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          )
+        ],
+      ),
+      body: Container(
+        child: CupertinoPicker(
+            itemExtent: 50,
+            onSelectedItemChanged: (int index) {
+              print(index);
+            },
+            children: sort
+                .map((e) => Center(
+                      child: Text(
+                        e,
+                        style: TextStyle(color: Colors.black, fontSize: 15),
+                      ),
+                    ))
+                .toList()),
+      ),
+    );
   }
 }
