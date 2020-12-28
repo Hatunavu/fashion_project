@@ -267,16 +267,26 @@ class _CollectionWidgetState extends State<CollectionWidget> {
         // physics:AlwaysScrollableScrollPhysics(),
 
         itemBuilder: (context, index) {
-          return Container(
-            child: ListView(
-              scrollDirection: Axis.vertical,
-              children: products
-                  .map((product) => CollectionList(
-                        products: product,
-                      ))
-                  .toList(),
-            ),
-          );
+          return (index == products.length - 1)
+              ? Column(
+                  children: products
+                      .map((e) => InkWell(
+                            onTap: () async {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ProductWidget(
+                                        products: e,
+                                      )));
+                            },
+                            child: CollectionList(
+                              products: e,
+                            ),
+                          ))
+                      .toList()
+                  // [
+                  //   CollectionList(products: products[index],)
+                  // ],
+                  )
+              : Container();
         });
   }
 }

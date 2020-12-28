@@ -15,71 +15,76 @@ class CollectionList extends StatelessWidget {
           margin: EdgeInsets.only(left: 15, top: 5, bottom: 5),
           decoration: BoxDecoration(
               color: Colors.white,
-              // boxShadow: <BoxShadow>[
-              //     BoxShadow(
-              //         color: Colors.black.withOpacity(0.08),
-              //         blurRadius: 5.0,
-              //         offset: Offset(1.0, 2.0),
-              //         spreadRadius: 0.0),
-              //   ],
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Stack(
-                // overflow: Overflow.visible,
+              Container(
+                  height: 70,
+                  width: 70,
+                  child: Image(
+                    image: products?.featuredImage != null &&
+                            products?.featuredImage != ''
+                        ? NetworkImage(products.featuredImage)
+                        : Text('No result'),
+                    fit: BoxFit.cover,
+                  )),
 
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ProductWidget()));
-                    },
-                    child: FadeInImage(
-                      fadeInDuration: Duration(milliseconds: 100),
-                      fadeOutDuration: Duration(milliseconds: 100),
-                      height: 80,
-                      width: 70,
-                      image: products?.featuredImage != null &&
-                              products?.featuredImage != ''
-                          ? NetworkImage(products.featuredImage)
-                          : Text('No result'),
-                    ),
-                  ),
-                  products?.sale != null && products?.sale != '-0%'
-                      ? Positioned(
-                          bottom: 2,
-                          left: -10,
-                          child: Container(
-                              width: 30,
-                              height: 18,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFF484105),
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(4),
-                                      bottomRight: Radius.circular(4))),
-                              child: Text(
-                                products?.sale?.toString(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11),
-                                textAlign: TextAlign.center,
-                              )))
-                      : Container(),
-                ],
-              ),
+              // Stack(
+              //   overflow: Overflow.visible,
+              //   children: [
+              //     InkWell(
+              //       onTap: () {
+              //         Navigator.of(context).push(MaterialPageRoute(
+              //             builder: (context) => ProductWidget()));
+              //       },
+              //       // child:
+              //       // FadeInImage(
+              //       //   fadeInDuration: Duration(milliseconds: 100),
+              //       //   fadeOutDuration: Duration(milliseconds: 100),
+              //       //   height: 80,
+              //       //   width: 70,
+              //       //   image: products?.featuredImage != null &&
+              //       //           products?.featuredImage != ''
+              //       //       ? NetworkImage(products.featuredImage)
+              //       //       : Text('No result'),
+              //       //
+              //     ),
+              //     products?.sale != null && products?.sale != '-0%'
+              //         ? Positioned(
+              //             bottom: 2,
+              //             left: -10,
+              //             child: Container(
+              //                 width: 30,
+              //                 height: 18,
+              //                 alignment: Alignment.center,
+              //                 decoration: BoxDecoration(
+              //                     color: Color(0xFF484105),
+              //                     borderRadius: BorderRadius.only(
+              //                         topRight: Radius.circular(4),
+              //                         bottomRight: Radius.circular(4))),
+              //                 child: Text(
+              //                   products?.sale?.toString(),
+              //                   style: TextStyle(
+              //                       color: Colors.white,
+              //                       fontWeight: FontWeight.bold,
+              //                       fontSize: 11),
+              //                   textAlign: TextAlign.center,
+              //                 )))
+              //         : Container(),
+              //   ],
+              // ),
+
               SizedBox(
                 height: 10,
               ),
               Expanded(
-                  child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => ProductWidget()));
-                },
+                //   child: InkWell(
+                // onTap: () {
+                //   Navigator.of(context).push(
+                //       MaterialPageRoute(builder: (context) => ProductWidget()));
+                // },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -94,7 +99,8 @@ class CollectionList extends StatelessWidget {
                     ),
                   ],
                 ),
-              ))
+              )
+              // )
             ],
           ),
         )
