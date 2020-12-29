@@ -11,6 +11,7 @@ import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.provider.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/choose.color.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/collection.card.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/core.data.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/components/product.care.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/components/product.infor.dart';
@@ -30,24 +31,14 @@ class _ProductWidgetState extends State<ProductWidget> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   ProductModel productModel;
   List<Options> option;
+  double widthDevice = 300;
   List<ProductModel> products_save = [];
-  //List<ProductModel> reverseSave = products_save.reversed.toList();
   var _counter;
   @override
   void initState() {
-    //sharedPref.remove('product_seen');
     getDetail();
     super.initState();
   }
-
-  // Future<void> _incrementCounter() async {
-  //   //debugger();
-  //   final SharedPreferences prefs = await _prefs;
-  //   prefs.setString('product_seen', jsonEncode(productModel));
-
-  //   final String counter = prefs.getString('product_seen');
-  //   //print(counter);
-  // }
 
   saveProduct(ProductModel productModel) async {
     //debugger();
@@ -67,7 +58,6 @@ class _ProductWidgetState extends State<ProductWidget> {
       if (products_save.length > 4) {
         products_save.removeAt(products_save.length - 1);
       }
-      //var productSeen = jsonDecode(response);
       products_save.insert(0, productModel);
     } else {
       products_save.insert(0, productModel);
@@ -169,10 +159,18 @@ class _ProductWidgetState extends State<ProductWidget> {
                     margin: EdgeInsets.only(right: 20),
                     child: Row(
                       children: [
-                        Icon(
-                          CustomIcons.icon_cart,
-                          color: Colors.black,
-                          size: 22,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CartWidget()));
+                          },
+                          child: Icon(
+                            CustomIcons.icon_cart,
+                            color: Colors.black,
+                            size: 22,
+                          ),
                         ),
                         SizedBox(
                           width: 20,
@@ -223,7 +221,10 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ),
                       _productVariant(),
                       productModel != null
-                          ? ProductCare(link: productModel.relatedLink)
+                          ? ProductCare(
+                              relatedProduct: productModel.relatedProduct,
+                              productModel: productModel,
+                            )
                           : Container(),
                       ProductSeen(
                         products: products_save,
@@ -249,7 +250,12 @@ class _ProductWidgetState extends State<ProductWidget> {
                         child: FlatButton(
                           shape: RoundedRectangleBorder(
                               side: BorderSide(color: Colors.black)),
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialogAddProductSuccess(
+                                'Thêm sản phẩm',
+                                'Đã thêm vào giỏ hàng thành công sản phẩm',
+                                widthDevice);
+                          },
                           child: Container(
                             padding: EdgeInsets.all(14.7),
                             child: Text(
@@ -269,7 +275,12 @@ class _ProductWidgetState extends State<ProductWidget> {
                       child: Container(
                           color: Colors.black,
                           child: FlatButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CartWidget()));
+                            },
                             child: Text(
                               'Mua ngay',
                               style: TextStyle(
@@ -284,5 +295,136 @@ class _ProductWidgetState extends State<ProductWidget> {
             ),
           ),
         ]));
+  }
+
+  void showDialogAddProductSuccess(
+      String title, String description, double widthDevice) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            titlePadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            title: Text(title),
+            contentPadding: EdgeInsets.only(bottom: 15),
+            content: Container(
+              width: widthDevice - 30,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                    child: Text(description),
+                  ),
+                  buildProductItemInPopup(),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    height: 40,
+                    width: double.infinity,
+                    color: Colors.white,
+                    child: FlatButton(
+                      color: Color(0xFF86744e),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Text(
+                        CoreData.textAddToCartSuccessButton,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  InkWell(
+                    child: Align(
+                        child: Container(
+                            padding: EdgeInsets.only(top: 10, bottom: 2),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 1.5, color: Color(0xFF86744e))),
+                            ),
+                            child: RichText(
+                              text: TextSpan(
+                                  text: 'Thanh toán ngay',
+                                  style: TextStyle(
+                                      color: Color(0xFF86744e),
+                                      fontWeight: FontWeight.bold),
+                                  children: <WidgetSpan>[
+                                    WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        baseline: TextBaseline.alphabetic,
+                                        child: Icon(Icons.arrow_forward,
+                                            size: 18, color: Color(0xFF86744e)))
+                                  ]),
+                            )),
+                        alignment: Alignment.center),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CartWidget()));
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget buildProductItemInPopup() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      color: Colors.white,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+              height: 60,
+              width: 60,
+              margin: EdgeInsets.only(right: 10),
+              child: Image(
+                image: widget?.products?.featuredImage != null &&
+                        widget?.products?.featuredImage != ''
+                    ? NetworkImage(widget.products.featuredImage)
+                    : Text('No result'),
+                fit: BoxFit.cover,
+              )),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(widget?.products?.title ?? 'No result',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                SizedBox(
+                  height: 3,
+                ),
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: widget?.products?.priceFormat + ' ' ?? 'No rsult',
+                      style: TextStyle(
+                          color: Color(0xFF86744e),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14)),
+                ]))
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

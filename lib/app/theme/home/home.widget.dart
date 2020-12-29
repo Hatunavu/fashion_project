@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/news/new.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/order/order.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/components/collections.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/components/end.home.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/home.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/components/main.slide.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/components/mid.prod.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/components/news.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   bool isScroll = false;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final tabs = [Home(), SearchWidget(), OrderWidget(), LoginWidget()];
+  final tabs = [Home(), SearchWidget(), CartWidget(), LoginWidget()];
 
   void _onItemTapped(int index) {
     if (mounted)
@@ -93,17 +87,17 @@ class _HomePageState extends State<HomePage> {
                   ),
                   title: Text(
                     'Trang chủ',
-                    style: TextStyle(fontSize: 10),
+                    style: TextStyle(fontSize: 12),
                   )),
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_search, size: 15),
-                  title: Text('Tìm kiếm', style: TextStyle(fontSize: 10))),
+                  title: Text('Tìm kiếm', style: TextStyle(fontSize: 12))),
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_cart, size: 15),
-                  title: Text('Giỏ hàng', style: TextStyle(fontSize: 10))),
+                  title: Text('Giỏ hàng', style: TextStyle(fontSize: 12))),
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_account, size: 15),
-                  title: Text('Tài khoản', style: TextStyle(fontSize: 10))),
+                  title: Text('Tài khoản', style: TextStyle(fontSize: 12))),
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.black,

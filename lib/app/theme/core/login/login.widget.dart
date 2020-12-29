@@ -99,11 +99,11 @@ class _LoginWidgetState extends State<LoginWidget> {
       child: Row(
         children: <Widget>[
           Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.white),
+            data: ThemeData(unselectedWidgetColor: Colors.black),
             child: Checkbox(
               value: _rememberMe,
-              checkColor: Colors.green,
-              activeColor: Colors.white,
+              checkColor: Colors.white,
+              activeColor: Colors.black,
               onChanged: (value) {
                 setState(() {
                   _rememberMe = value;
@@ -135,7 +135,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         child: Text(
           'LOGIN',
           style: TextStyle(
-            color: Color(0xFF527DAA),
+            color: Color(0xFF86744e),
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -216,7 +216,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             TextSpan(
               text: 'Don\'t have an Account? ',
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black,
                 fontSize: 14.0,
                 fontWeight: FontWeight.w400,
               ),
@@ -224,7 +224,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             TextSpan(
               text: 'Sign Up',
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black,
                 fontSize: 15.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -246,19 +246,8 @@ class _LoginWidgetState extends State<LoginWidget> {
             Container(
               height: double.infinity,
               width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF73AEF5),
-                    Color(0xFF61A4F1),
-                    Color(0xFF478DE0),
-                    Color(0xFF398AE5),
-                  ],
-                  stops: [0.1, 0.4, 0.7, 0.9],
-                ),
-              ),
+              decoration:
+                  BoxDecoration(color: Color.fromRGBO(244, 243, 243, 1)),
             ),
             Container(
               height: height,
@@ -273,7 +262,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     Text(
                       'Sign In',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF86744e),
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),

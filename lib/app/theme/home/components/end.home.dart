@@ -23,7 +23,9 @@ class _EndHomeState extends State<EndHome> {
   }
 
   getEndCollection() async {
-    collectionEnd = await CollectionProvider().getModelFromApi();
+    String url =
+        'https://suplo-fashion.myharavan.com/collections/all?view=smb.json';
+    collectionEnd = await CollectionProvider().getModelFromApi(url);
 
     if (mounted)
       setState(() {

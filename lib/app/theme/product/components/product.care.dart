@@ -1,39 +1,22 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
-import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.provider.dart';
-import 'package:suplo_project_8_12_2020/app/blocs/product/product.care.model.dart';
-import 'package:suplo_project_8_12_2020/app/blocs/product/product.provider.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/product.care.card.dart';
 
 class ProductCare extends StatefulWidget {
-  String link;
+  ProductModel productModel;
+  List<RelatedProduct> relatedProduct;
 
-  ProductCare({this.link});
+  ProductCare({this.relatedProduct, this.productModel});
   @override
   _ProductCareState createState() => _ProductCareState();
 }
 
 class _ProductCareState extends State<ProductCare> {
-  ProductCareModel collection;
-  @override
-  void initState() {
-    // TODO: implement initState
-    getCollection();
-    super.initState();
-  }
-
-  getCollection() async {
-    collection = await ProductProvider().getCareFromApi(widget.link);
-    if (this.mounted)
-      setState(() {
-        collection = collection;
-      });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final relatedProduct = widget.relatedProduct;
     return Padding(
       padding: EdgeInsets.only(left: 20, top: 20),
       child: Column(
@@ -50,9 +33,15 @@ class _ProductCareState extends State<ProductCare> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  'Xem tất cả>',
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
+                InkWell(
+                  onTap: () {
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (context) => );
+                  },
+                  child: Text(
+                    'Xem tất cả>',
+                    style: TextStyle(color: Colors.grey, fontSize: 15),
+                  ),
                 ),
               ],
             ),
@@ -64,8 +53,8 @@ class _ProductCareState extends State<ProductCare> {
             height: 350,
             child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: collection != null && collection.products.isNotEmpty
-                    ? collection.products
+                children: relatedProduct != null
+                    ? relatedProduct
                         .map((e) => ProductCareCard(
                               product: e,
                             ))

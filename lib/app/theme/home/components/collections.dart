@@ -29,7 +29,9 @@ class _CollectionsWidgetState extends State<Collections> {
   }
 
   getCollection() async {
-    collection = await CollectionProvider().getModelFromApi();
+    String url =
+        'https://suplo-fashion.myharavan.com/collections/all?view=smb.json';
+    collection = await CollectionProvider().getModelFromApi(url);
     if (this.mounted) {
       setState(() {
         collection = collection;

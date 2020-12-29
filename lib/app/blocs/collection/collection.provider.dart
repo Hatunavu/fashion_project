@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 class CollectionProvider {
   CollectionModel collectionData;
 
-  Future<CollectionModel> getModelFromApi() async {
-    final url =
-        'https://suplo-fashion.myharavan.com/collections/all?view=smb.json';
+  Future<CollectionModel> getModelFromApi(String url) async {
+    // final url =
+    //     'https://suplo-fashion.myharavan.com/collections/all?view=smb.json';
     final http.Client httpClient = http.Client();
     try {
       final response = await httpClient.get(url);
