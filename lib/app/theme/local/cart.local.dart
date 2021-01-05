@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 
 class CartLocal {
-  Future<bool> savaCart(CartItem payload, bool isChangeAmount) async {
+  Future<bool> saveCart(CartItem payload, bool isChangeAmount) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     CartItem item = CartItem(
         id: payload.id,
@@ -14,6 +15,7 @@ class CartLocal {
         quantity: 1);
 
     CartModel cartModel = CartModel();
+    //debugger();
     cartModel = await loadCart();
     if (cartModel.items != null &&
         cartModel.items.indexWhere((element) => element.id == payload.id) !=

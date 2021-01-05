@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/collection.card.dart';
 import 'package:suplo_project_8_12_2020/app/theme/collection/components/collection.list.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/product.widget.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
 
@@ -61,42 +62,48 @@ class _CollectionWidgetState extends State<CollectionWidget> {
           color: Color(0xFF333333).withOpacity(.6),
         ),
       ),
-      title: Container(
-        height: 35,
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.0,
-        ),
-        margin: EdgeInsets.only(right: 15, top: 10, bottom: 10),
-        alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(244, 243, 243, 1),
-          borderRadius: BorderRadius.all(Radius.circular(50)),
-        ),
-        child: InkWell(
-          onTap: () {},
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(
-                  CustomIcons.icon_search,
-                  color: Colors.black45,
-                  size: 18,
+      title: InkWell(
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SearchWidget()));
+        },
+        child: Container(
+          height: 35,
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.0,
+          ),
+          margin: EdgeInsets.only(right: 15, top: 10, bottom: 10),
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(244, 243, 243, 1),
+            borderRadius: BorderRadius.all(Radius.circular(50)),
+          ),
+          child: InkWell(
+            onTap: () {},
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(
+                    CustomIcons.icon_search,
+                    color: Colors.black45,
+                    size: 18,
+                  ),
                 ),
-              ),
-              Expanded(
-                  child: Text(
-                'Search you\'re looking for',
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w400),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ))
-            ],
+                Expanded(
+                    child: Text(
+                  'Search you\'re looking for',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ))
+              ],
+            ),
           ),
         ),
       ),

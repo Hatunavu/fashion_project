@@ -106,7 +106,7 @@ class _CartItemState extends State<CartItemWidget> {
               await showAlert('Xóa sản phẩm',
                   'Bạn có chắc muốn xóa sản phẩm này không?', cartItem);
             } else {
-              await CartLocal().savaCart(cartItem, false);
+              await CartLocal().saveCart(cartItem, false);
               widget.getListCart();
             }
           },
@@ -134,7 +134,7 @@ class _CartItemState extends State<CartItemWidget> {
         ),
         InkWell(
           onTap: () async {
-            await CartLocal().savaCart(cartItem, true);
+            await CartLocal().saveCart(cartItem, true);
             widget.getListCart();
           },
           child: Container(
@@ -172,7 +172,7 @@ class _CartItemState extends State<CartItemWidget> {
                   child: Text('Đóng')),
               FlatButton(
                   onPressed: () async {
-                    await CartLocal().savaCart(cartItem, false);
+                    await CartLocal().saveCart(cartItem, false);
                     widget.getListCart();
                     Navigator.pop(context);
                   },

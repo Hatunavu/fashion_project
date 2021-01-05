@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/login/components/signup.widget.dart';
 import 'package:suplo_project_8_12_2020/utilities/constants.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -209,7 +211,10 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   Widget _buildSignupBtn() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignupWidget()));
+      },
       child: RichText(
         text: TextSpan(
           children: [
@@ -224,10 +229,10 @@ class _LoginWidgetState extends State<LoginWidget> {
             TextSpan(
               text: 'Sign Up',
               style: TextStyle(
-                color: Colors.black,
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-              ),
+                  color: Colors.black,
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline),
             ),
           ],
         ),
@@ -286,7 +291,6 @@ class _LoginWidgetState extends State<LoginWidget> {
           ],
         ),
       ),
-      // ),
     );
   }
 }

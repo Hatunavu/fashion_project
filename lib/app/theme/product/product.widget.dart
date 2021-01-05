@@ -258,7 +258,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                 image: productModel.images.first,
                                 quantity: 1,
                                 price: productModel.price);
-                            CartLocal().savaCart(cartItem, true);
+                            CartLocal().saveCart(cartItem, true);
 
                             // bool productInCart = false;
 

@@ -73,7 +73,7 @@ class _CartWidgetState extends State<CartWidget> {
       ),
       body: Stack(
         children: [
-          buildListItemCart(cartModel.items),
+          cartModel?.items != null ? buildListItemCart(cartModel.items) : null,
           //buildEmptyCart(),
           /*buildCartBottom(widthDevice)*/
           Column(
@@ -116,8 +116,10 @@ class _CartWidgetState extends State<CartWidget> {
   }
 
   Widget buildCartBottom() {
-    FlutterMoneyFormatter fmf =
-        FlutterMoneyFormatter(amount: cartModel.totalPrice.toDouble() / 100);
+    FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
+        amount: cartModel?.totalPrice != null
+            ? cartModel.totalPrice.toDouble() / 100
+            : null);
     MoneyFormatterOutput fo = fmf.output;
     return Stack(
       children: [
@@ -247,6 +249,7 @@ class _CartWidgetState extends State<CartWidget> {
       // addAutomaticKeepAlives: true,
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
+        var tempCartItem = itemsCart[index];
         return Dismissible(
           key: UniqueKey(),
           direction: DismissDirection.endToStart,
@@ -265,8 +268,8 @@ class _CartWidgetState extends State<CartWidget> {
                 style: TextStyle(color: Colors.white, fontSize: 14)),
           ),
           confirmDismiss: (direction) async {
-            final bool res = await showAlert(
-                'Xóa sản phẩm', 'Bạn có chắc muốn xóa sản phẩm này không?');
+            final bool res = await showAlert('Xóa sản phẩm',
+                'Bạn có chắc muốn xóa sản phẩm này không?', tempCartItem);
             return res;
           },
         );
@@ -274,7 +277,7 @@ class _CartWidgetState extends State<CartWidget> {
     );
   }
 
-  showAlert(String title, String description) {
+  showAlert(String title, String description, CartItem cartItem) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -289,9 +292,10 @@ class _CartWidgetState extends State<CartWidget> {
                   },
                   child: Text('Đóng')),
               FlatButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await CartLocal().saveCart(cartItem, false);
+                    getLocal();
                     Navigator.pop(context);
-                    return true;
                   },
                   child: Text('Xoá'))
             ],
