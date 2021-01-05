@@ -32,6 +32,8 @@ dependencies:
   rxdart: ^0.25.0
   global_configuration: ^1.6.0
   simple_animations: ^2.4.2
+  #intl: ^0.16.1
+  flutter_money_formatter: ^0.8.3
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
@@ -13,6 +14,7 @@ import 'package:suplo_project_8_12_2020/app/theme/cards/choose.color.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/collection.card.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/core.data.dart';
+import 'package:suplo_project_8_12_2020/app/theme/local/cart.local.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/components/product.care.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/components/product.infor.dart';
 import 'package:suplo_project_8_12_2020/app/theme/product/components/product.seen.dart';
@@ -28,12 +30,11 @@ class ProductWidget extends StatefulWidget {
 }
 
 class _ProductWidgetState extends State<ProductWidget> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   ProductModel productModel;
   List<Options> option;
   double widthDevice = 300;
   List<ProductModel> products_save = [];
-  var _counter;
+  CartModel cartData = CartModel();
   @override
   void initState() {
     getDetail();
@@ -250,11 +251,67 @@ class _ProductWidgetState extends State<ProductWidget> {
                         child: FlatButton(
                           shape: RoundedRectangleBorder(
                               side: BorderSide(color: Colors.black)),
-                          onPressed: () {
+                          onPressed: () async {
+                            CartItem cartItem = CartItem(
+                                id: productModel.id,
+                                title: productModel.title,
+                                image: productModel.images.first,
+                                quantity: 1,
+                                price: productModel.price);
+                            CartLocal().savaCart(cartItem, true);
+
+                            // bool productInCart = false;
+
+                            // CartItem item = CartItem(
+                            //     id: productModel.id,
+                            //     title: productModel.title,
+                            //     image: productModel.images.first,
+                            //     quantity: 1,
+                            //     price: productModel.price);
+                            // SharedPreferences prefs =
+                            //     await SharedPreferences.getInstance();
+                            // //debugger();
+                            // var cartLocal = prefs.getString('carts');
+                            // //print(cartLocal);
+                            // if (cartLocal != null) {
+                            //   cartData =
+                            //       CartModel.fromJson(jsonDecode(cartLocal));
+                            // }
+                            // if (cartData.items != null) {
+                            //   // debugger();
+                            //   cartData.items.forEach((element) {
+                            //     if (element.id == productModel.id) {
+                            //       element.quantity += 1;
+                            //       productInCart = true;
+                            //     }
+                            //   });
+                            //   if (!productInCart) {
+                            //     cartData.items.add(item);
+                            //   }
+                            // } else {
+                            //   cartData.items = List();
+                            //   cartData.items.add(item);
+                            // }
+
+                            // //print(cartData.items.first.toJson());
+                            // cartData.itemCount = 0;
+                            // cartData.totalPrice = 0;
+                            // cartData.items.forEach((element) {
+                            //   cartData.itemCount =
+                            //       cartData.itemCount + element.quantity;
+                            //   cartData.totalPrice +=
+                            //       element.quantity * element.price;
+                            // });
+
+                            // //print('cartData ${cartData.toJson()}');
+                            // await prefs.setString(
+                            //     'carts', jsonEncode(cartData.toJson()));
+
                             showDialogAddProductSuccess(
                                 'Thêm sản phẩm',
                                 'Đã thêm vào giỏ hàng thành công sản phẩm',
                                 widthDevice);
+                            // print(prefs.getString('carts'));
                           },
                           child: Container(
                             padding: EdgeInsets.all(14.7),
@@ -366,7 +423,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CartWidget()));
+                              builder: (context) => CartWidget(
+                                    statusSwitchPage: true,
+                                  )));
                     },
                   )
                 ],
