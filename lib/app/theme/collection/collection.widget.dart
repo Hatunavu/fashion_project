@@ -65,7 +65,11 @@ class _CollectionWidgetState extends State<CollectionWidget> {
       title: InkWell(
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SearchWidget()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SearchWidget(
+                        notBack: true,
+                      )));
         },
         child: Container(
           height: 35,

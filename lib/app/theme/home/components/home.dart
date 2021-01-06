@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/news/new.model.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/collections.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/end.home.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/main.slide.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/mid.prod.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/news.dart';
+import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
 
 class Home extends StatefulWidget {
@@ -45,14 +47,18 @@ class _HomeState extends State<Home> {
   }
 
   Widget addLeadingIcon() {
-    //return new Container(
     return Stack(
       alignment: AlignmentDirectional.center,
-      children: <Widget>[
-        new Icon(
-          CustomIcons.icon_menu_bar,
-          size: 18,
-          color: isScroll ? Colors.black54 : Colors.white,
+      children: [
+        InkWell(
+          onTap: () {
+            Scaffold.of(context).openDrawer();
+          },
+          child: Icon(
+            CustomIcons.icon_menu_bar,
+            size: 18,
+            color: isScroll ? Colors.black54 : Colors.white,
+          ),
         ),
       ],
     );
@@ -73,9 +79,19 @@ class _HomeState extends State<Home> {
               margin: EdgeInsets.only(right: 20),
               child: Row(
                 children: [
-                  Icon(
-                    CustomIcons.icon_search,
-                    color: isScroll ? Colors.black54 : Colors.white,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchWidget(
+                                    notBack: false,
+                                  )));
+                    },
+                    child: Icon(
+                      CustomIcons.icon_search,
+                      color: isScroll ? Colors.black54 : Colors.white,
+                    ),
                   ),
                   SizedBox(
                     width: 15,

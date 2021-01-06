@@ -4,6 +4,7 @@ import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.da
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/wishlist/wishlist.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/home.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
 
@@ -22,7 +23,13 @@ class _HomePageState extends State<HomePage> {
   bool isScroll = false;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final tabs = [Home(), SearchWidget(), CartWidget(), LoginWidget()];
+  final tabs = [
+    Home(),
+    SearchWidget(),
+    WishlistWidget(),
+    CartWidget(),
+    LoginWidget()
+  ];
 
   void _onItemTapped(int index) {
     if (mounted)
@@ -69,9 +76,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget listTitle(String title) {
+    return ListTile(
+        leading: Text(title,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w500)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.only(left: 20, top: 50),
+            children: [
+              listTitle('Nhóm sản phẩm'),
+              listTitle('Sản phẩm nổi bật'),
+              listTitle('Tin tức'),
+              listTitle('Chính sách'),
+              listTitle('Liên hệ')
+            ],
+          ),
+        ),
         backgroundColor: Color.fromRGBO(244, 243, 243, 1),
         extendBodyBehindAppBar: true,
         body: tabs[_selectedIndex],
@@ -92,6 +120,9 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_search, size: 15),
                   title: Text('Tìm kiếm', style: TextStyle(fontSize: 12))),
+              BottomNavigationBarItem(
+                  icon: Icon(CustomIcons.icon_wishlist, size: 15),
+                  title: Text('Yêu thích', style: TextStyle(fontSize: 12))),
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_cart, size: 15),
                   title: Text('Giỏ hàng', style: TextStyle(fontSize: 12))),

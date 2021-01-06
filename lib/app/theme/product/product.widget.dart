@@ -165,7 +165,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => CartWidget()));
+                                    builder: (context) => CartWidget(
+                                          notBack: false,
+                                        )));
                           },
                           child: Icon(
                             CustomIcons.icon_cart,
@@ -217,9 +219,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                   padding: EdgeInsets.only(bottom: 70),
                   child: Column(
                     children: [
-                      ProductInfor(
-                        productModel: productModel,
-                      ),
+                      ProductInfor(productModel: productModel),
                       _productVariant(),
                       productModel != null
                           ? ProductCare(
@@ -258,7 +258,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                                 image: productModel.images.first,
                                 quantity: 1,
                                 price: productModel.price);
-                            CartLocal().saveCart(cartItem, true);
+                            CartLocal().saveCart(cartItem, true, false);
 
                             // bool productInCart = false;
 
@@ -332,11 +332,20 @@ class _ProductWidgetState extends State<ProductWidget> {
                       child: Container(
                           color: Colors.black,
                           child: FlatButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              CartItem cartItem = CartItem(
+                                  id: productModel.id,
+                                  title: productModel.title,
+                                  image: productModel.images.first,
+                                  quantity: 1,
+                                  price: productModel.price);
+                              await CartLocal().saveCart(cartItem, true, false);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CartWidget()));
+                                      builder: (context) => CartWidget(
+                                            notBack: false,
+                                          )));
                             },
                             child: Text(
                               'Mua ngay',
@@ -424,7 +433,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => CartWidget(
-                                    statusSwitchPage: true,
+                                    // statusSwitchPage: true,
+                                    notBack: false,
                                   )));
                     },
                   )

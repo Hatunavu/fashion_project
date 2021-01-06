@@ -63,7 +63,6 @@ class _LoginWidgetState extends State<LoginWidget> {
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
-              // fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,

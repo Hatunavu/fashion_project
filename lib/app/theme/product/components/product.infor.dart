@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/wishlist/wishlist.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/choose.color.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/choose.size.dart';
+import 'package:suplo_project_8_12_2020/app/theme/local/wishlist.local.dart';
 
 class ProductInfor extends StatefulWidget {
   ProductModel productModel;
@@ -24,11 +30,41 @@ class _ProductInforState extends State<ProductInfor> {
   final List<String> size = ['S', 'M', 'L', 'XL', 'XXL'];
 
   bool _checkFavorite = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  didUpdateWidget(ProductInfor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    getLocal();
+  }
+
+  CollectionModel collectionModel;
+
+  getLocal() async {
+    // debugger();
+    var response = await WishlistLocal().loadWishlist();
+    if (response != null) {
+      if (mounted) {
+        setState(() {
+          collectionModel = response;
+        });
+      }
+      if (collectionModel != null && collectionModel.products.length > 0) {
+        if (widget.productModel != null &&
+            jsonEncode(collectionModel).contains(widget.productModel.id)) {
+          setState(() {
+            _checkFavorite = true;
+          });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    //print('${widget.productModel.options}');
-    // productModel = widget.productModel;
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
@@ -93,6 +129,25 @@ class _ProductInforState extends State<ProductInfor> {
                             setState(() {
                               _checkFavorite = !_checkFavorite;
                             });
+
+                            Products products = Products(
+                              id: widget.productModel.id,
+                              title: widget.productModel.title,
+                              featuredImage: widget.productModel.images.first,
+                              price: widget.productModel.price,
+                              priceFormat: widget.productModel.priceFormat,
+                              compareAtPrice:
+                                  widget.productModel.compareAtPrice,
+                              compareAtPriceFormat:
+                                  widget.productModel.compareAtPriceFormat,
+                              url: widget.productModel.url,
+                              handle: widget.productModel.handle,
+                              sale: widget.productModel.sale,
+                              available: widget.productModel.available,
+                            );
+                            _checkFavorite == true
+                                ? WishlistLocal().saveWishlist(products, true)
+                                : WishlistLocal().saveWishlist(products, false);
                           },
                           child: _checkFavorite
                               ? Icon(

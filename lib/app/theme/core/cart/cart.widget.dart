@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
@@ -12,14 +13,16 @@ import 'package:suplo_project_8_12_2020/app/theme/local/cart.local.dart';
 class CartWidget extends StatefulWidget {
   // CartModel cartModel;
   // CartWidget({this.cartModel});
-  final bool statusSwitchPage;
-  CartWidget({this.statusSwitchPage});
+  // final bool statusSwitchPage;
+  final bool notBack;
+  CartWidget({this.notBack}
+      // {this.statusSwitchPage}
+      );
   @override
   _CartWidgetState createState() => _CartWidgetState();
 }
 
 class _CartWidgetState extends State<CartWidget> {
-  final formatCurrency = NumberFormat.compactCurrency();
   List<CartItem> cartItem = List();
   CartModel cartModel;
   int totalAmount = 0;
@@ -45,6 +48,7 @@ class _CartWidgetState extends State<CartWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // debugger();
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 243, 243, 1),
       appBar: AppBar(
@@ -53,17 +57,19 @@ class _CartWidgetState extends State<CartWidget> {
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
-        leading: Container(
-          width: 50,
-          height: 35,
-          alignment: Alignment.center,
-          child: FlatButton(
-              padding: EdgeInsets.only(left: 10, right: 15),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Icon(Icons.arrow_back, color: Colors.black)),
-        ),
+        leading: widget.notBack == false
+            ? Container(
+                width: 50,
+                height: 35,
+                alignment: Alignment.center,
+                child: FlatButton(
+                    padding: EdgeInsets.only(left: 10, right: 15),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back, color: Colors.black)),
+              )
+            : Container(),
         titleSpacing: 0,
         title: Text('Giỏ hàng của tôi',
             style: TextStyle(
@@ -73,7 +79,9 @@ class _CartWidgetState extends State<CartWidget> {
       ),
       body: Stack(
         children: [
-          cartModel?.items != null ? buildListItemCart(cartModel.items) : null,
+          cartModel != null && cartModel?.items != null
+              ? buildListItemCart(cartModel.items)
+              : Container(),
           //buildEmptyCart(),
           /*buildCartBottom(widthDevice)*/
           Column(
@@ -119,7 +127,7 @@ class _CartWidgetState extends State<CartWidget> {
     FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
         amount: cartModel?.totalPrice != null
             ? cartModel.totalPrice.toDouble() / 100
-            : null);
+            : 0);
     MoneyFormatterOutput fo = fmf.output;
     return Stack(
       children: [
@@ -196,7 +204,7 @@ class _CartWidgetState extends State<CartWidget> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('${cartModel.itemCount}',
+                        Text('${cartModel?.itemCount ?? 0}',
                             style: TextStyle(
                                 fontWeight: FontWeight.w700, fontSize: 18)),
                         SizedBox(
@@ -250,29 +258,34 @@ class _CartWidgetState extends State<CartWidget> {
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
         var tempCartItem = itemsCart[index];
-        return Dismissible(
-          key: UniqueKey(),
-          direction: DismissDirection.endToStart,
-          child: Container(
-            child: CartItemWidget(
-              cartModel: cartModel,
-              getListCart: getLocal,
-              statusSwitchPage: widget.statusSwitchPage,
+        return Column(
+            children: List.generate(
+          itemsCart.length,
+          (index) => Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.endToStart,
+            child: Container(
+              child: CartItemWidget(
+                cartItem: itemsCart[index],
+                cartModel: cartModel,
+                getListCart: getLocal,
+                // statusSwitchPage: widget.statusSwitchPage,
+              ),
             ),
+            background: Container(
+              alignment: AlignmentDirectional.centerEnd,
+              color: Color(0xFFe54f40),
+              padding: EdgeInsets.only(right: 15),
+              child: Text('Xoá',
+                  style: TextStyle(color: Colors.white, fontSize: 14)),
+            ),
+            confirmDismiss: (direction) async {
+              final bool res = await showAlert('Xóa sản phẩm',
+                  'Bạn có chắc muốn xóa sản phẩm này không?', tempCartItem);
+              return res;
+            },
           ),
-          background: Container(
-            alignment: AlignmentDirectional.centerEnd,
-            color: Color(0xFFe54f40),
-            padding: EdgeInsets.only(right: 15),
-            child: Text('Xoá',
-                style: TextStyle(color: Colors.white, fontSize: 14)),
-          ),
-          confirmDismiss: (direction) async {
-            final bool res = await showAlert('Xóa sản phẩm',
-                'Bạn có chắc muốn xóa sản phẩm này không?', tempCartItem);
-            return res;
-          },
-        );
+        ));
       },
     );
   }
@@ -287,13 +300,14 @@ class _CartWidgetState extends State<CartWidget> {
             actions: [
               FlatButton(
                   onPressed: () {
+                    // debugger();
                     Navigator.pop(context);
                     return false;
                   },
                   child: Text('Đóng')),
               FlatButton(
                   onPressed: () async {
-                    await CartLocal().saveCart(cartItem, false);
+                    await CartLocal().saveCart(cartItem, false, true);
                     getLocal();
                     Navigator.pop(context);
                   },

@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 
 class CartLocal {
-  Future<bool> saveCart(CartItem payload, bool isChangeAmount) async {
+  Future<bool> saveCart(
+      CartItem payload, bool isChangeAmount, bool isDel) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     CartItem item = CartItem(
         id: payload.id,
@@ -15,23 +16,28 @@ class CartLocal {
         quantity: 1);
 
     CartModel cartModel = CartModel();
-    //debugger();
+    // debugger();
     cartModel = await loadCart();
     if (cartModel.items != null &&
         cartModel.items.indexWhere((element) => element.id == payload.id) !=
             -1) {
-      for (int i = 0; i < cartModel.items.length; i++) {
-        if (cartModel.items[i].id == payload.id) {
-          if (isChangeAmount) {
-            cartModel.items[i].updateQuantity(true);
-          } else {
-            if (cartModel.items[i].quantity <= 1) {
-              cartModel.items.removeAt(i);
+      if (isDel == false) {
+        for (int i = 0; i < cartModel.items.length; i++) {
+          if (cartModel.items[i].id == payload.id) {
+            if (isChangeAmount) {
+              cartModel.items[i].updateQuantity(true);
             } else {
-              cartModel.items[i].updateQuantity(false);
+              if (cartModel.items[i].quantity <= 1) {
+                cartModel.items.removeAt(i);
+              } else {
+                cartModel.items[i].updateQuantity(false);
+              }
             }
           }
         }
+      } else {
+        cartModel.items.removeAt(
+            cartModel.items.indexWhere((element) => element.id == payload.id));
       }
     } else if (cartModel.items != null &&
         cartModel.items.indexWhere((element) => element.id == payload.id) ==
