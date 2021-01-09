@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';

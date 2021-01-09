@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+// import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/components/cart.item.dart';
@@ -124,11 +124,11 @@ class _CartWidgetState extends State<CartWidget> {
   }
 
   Widget buildCartBottom() {
-    FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
-        amount: cartModel?.totalPrice != null
-            ? cartModel.totalPrice.toDouble() / 100
-            : 0);
-    MoneyFormatterOutput fo = fmf.output;
+    // FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
+    //     amount: cartModel?.totalPrice != null
+    //         ? cartModel.totalPrice.toDouble() / 100
+    //         : 0);
+    // MoneyFormatterOutput fo = fmf.output;
     return Stack(
       children: [
         Positioned(
@@ -217,9 +217,9 @@ class _CartWidgetState extends State<CartWidget> {
                     Text('Tạm tính:',
                         style: TextStyle(fontSize: 14, height: 1.2)),
                     Text(
-                      fo.withoutFractionDigits + 'đ',
+                      //fo.withoutFractionDigits + 'đ',
                       //'${widget.cartModel.totalPrice}',
-                      //'${cartModel.totalPrice}đ',
+                      '${cartModel.totalPrice}đ',
                       style:
                           TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                     )
@@ -254,7 +254,6 @@ class _CartWidgetState extends State<CartWidget> {
     return ListView.builder(
       itemCount: itemsCart.length,
       padding: EdgeInsets.only(top: 15, bottom: 170),
-      // addAutomaticKeepAlives: true,
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
         var tempCartItem = itemsCart[index];
@@ -269,7 +268,6 @@ class _CartWidgetState extends State<CartWidget> {
                 cartItem: itemsCart[index],
                 cartModel: cartModel,
                 getListCart: getLocal,
-                // statusSwitchPage: widget.statusSwitchPage,
               ),
             ),
             background: Container(

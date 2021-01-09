@@ -1,7 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:suplo_project_8_12_2020/app.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/login.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/login/components/loading.dialog.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/login/components/message.dialog.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/components/signup.widget.dart';
+import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
 import 'package:suplo_project_8_12_2020/utilities/constants.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -11,6 +18,19 @@ class LoginWidget extends StatefulWidget {
 
 class _LoginWidgetState extends State<LoginWidget> {
   bool _rememberMe = false;
+  bool _showPass = false;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passController = TextEditingController();
+  LoginBloc _loginBloc = LoginBloc();
+
+  String _email;
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  void onToggleShowPass() {
+    setState(() {
+      _showPass = !_showPass;
+    });
+  }
 
   Widget _buildEmailTF() {
     return Column(
@@ -21,25 +41,40 @@ class _LoginWidgetState extends State<LoginWidget> {
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            keyboardType: TextInputType.emailAddress,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.email,
-                color: Colors.white,
+        StreamBuilder(
+          stream: _loginBloc.emailStream,
+          builder: (context, snapshot) => Column(
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: kBoxDecorationStyle,
+                height: 60.0,
+                child: TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(top: 14.0),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.white,
+                    ),
+                    hintText: 'Enter your Email',
+                    hintStyle: kHintTextStyle,
+                  ),
+                ),
               ),
-              hintText: 'Enter your Email',
-              hintStyle: kHintTextStyle,
-            ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                  snapshot?.error ?? '',
+                  style: TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              )
+            ],
           ),
         ),
       ],
@@ -49,33 +84,65 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget _buildPasswordTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      children: [
         Text(
           'Password',
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            obscureText: true,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.lock,
-                color: Colors.white,
+        Stack(
+          alignment: AlignmentDirectional.centerEnd,
+          children: [
+            StreamBuilder(
+              stream: _loginBloc.passStream,
+              builder: (context, snapshot) => Column(
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    decoration: kBoxDecorationStyle,
+                    height: 60.0,
+                    child: TextField(
+                      controller: _passController,
+                      obscureText: !_showPass,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(top: 14.0),
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Colors.white,
+                        ),
+                        hintText: 'Enter your Password',
+                        hintStyle: kHintTextStyle,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      snapshot?.error ?? '',
+                      style: TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  )
+                ],
               ),
-              hintText: 'Enter your Password',
-              hintStyle: kHintTextStyle,
             ),
-          ),
-        ),
+            Padding(
+              padding: const EdgeInsets.only(right: 5, bottom: 13),
+              child: GestureDetector(
+                  onTap: onToggleShowPass,
+                  child: Text(
+                    _showPass ? 'HIDE' : 'SHOW',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
+                  )),
+            )
+          ],
+        )
       ],
     );
   }
@@ -127,7 +194,16 @@ class _LoginWidgetState extends State<LoginWidget> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {},
+        onPressed: () {
+          _onLoginClick();
+          // if (_formkey.currentState.validate()) {
+          //   print("successful");
+
+          //   return;
+          // } else {
+          //   print("UnSuccessfull");
+          // }
+        },
         padding: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -239,6 +315,28 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
+  void _onLoginClick() {
+    String email = _emailController.text;
+    String pass = _passController.text;
+
+    var isValid = _loginBloc.isValid(email, pass);
+    if (isValid) {
+      LoadingDialog.showLoadingDialog(context, 'Loading...');
+      _loginBloc.singIn(
+          email: email,
+          pass: pass,
+          onSuccess: () {
+            LoadingDialog.hideLoadingDialog(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+          },
+          onError: (msg) {
+            LoadingDialog.hideLoadingDialog(context);
+            MessageDialog.showMsgDialog(context, 'Sign in', msg);
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -261,7 +359,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   vertical: 30,
                 ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       'Sign In',
@@ -274,7 +372,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     SizedBox(height: 30),
                     _buildEmailTF(),
                     SizedBox(
-                      height: 30,
+                      height: 15,
                     ),
                     _buildPasswordTF(),
                     _buildForgotPasswordBtn(),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+// import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/local/cart.local.dart';
@@ -76,15 +76,16 @@ class _CartItemState extends State<CartItemWidget> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: FlutterMoneyFormatter(
-                                            amount: widget.cartItem.price
-                                                    // widget.cartModel
-                                                    //         .items[index].price
-                                                    .toDouble() /
-                                                100)
-                                        .output
-                                        .withoutFractionDigits +
-                                    'đ',
+                                text: widget.cartItem.price.toString(),
+                                // FlutterMoneyFormatter(
+                                //             amount: widget.cartItem.price
+                                //                     // widget.cartModel
+                                //                     //         .items[index].price
+                                //                     .toDouble() /
+                                //                 100)
+                                //         .output
+                                //         .withoutFractionDigits +
+                                //     'đ',
                                 style: TextStyle(
                                     color: Color(0xFF86744e),
                                     fontWeight: FontWeight.w700,

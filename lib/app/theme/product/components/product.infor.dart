@@ -20,6 +20,8 @@ class ProductInfor extends StatefulWidget {
 class _ProductInforState extends State<ProductInfor> {
   // ProductModel productModel;
   Options options;
+  bool _checkFavorite = false;
+  CollectionModel collectionModel;
 
   final List<Color> color = [
     Colors.amberAccent,
@@ -29,7 +31,6 @@ class _ProductInforState extends State<ProductInfor> {
 
   final List<String> size = ['S', 'M', 'L', 'XL', 'XXL'];
 
-  bool _checkFavorite = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -37,11 +38,10 @@ class _ProductInforState extends State<ProductInfor> {
   }
 
   didUpdateWidget(ProductInfor oldWidget) {
+    // debugger();
     super.didUpdateWidget(oldWidget);
     getLocal();
   }
-
-  CollectionModel collectionModel;
 
   getLocal() async {
     // debugger();

@@ -28,12 +28,13 @@ dependencies:
   carousel_slider: ^2.3.1
   carousel_pro: ^1.0.0
   shared_preferences: ^0.5.12+4
-  localstorage: ^3.0.6+9
-  rxdart: ^0.25.0
-  global_configuration: ^1.6.0
-  simple_animations: ^2.4.2
-  #intl: ^0.16.1
-  flutter_money_formatter: ^0.8.3
+  async: ^2.4.2
+  # intl: ^0.16.1
+  # flutter_money_formatter: ^0.8.3
+  firebase_auth: ^0.18.4+1
+  firebase_database: ^4.4.0
+  firebase_core: ^0.5.3
+  form_validator: ^0.1.7
 
 
   # The following adds the Cupertino Icons font to your application.

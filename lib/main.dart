@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
@@ -11,9 +12,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return 
+    MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'Mulish'),
-        home: HomePage());
+        home: FutureBuilder(
+          future: Firebase.initializeApp(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Container();
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              return HomePage();
+            }
+            return Container();
+          },
+        ));
   }
 }
