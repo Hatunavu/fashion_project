@@ -340,7 +340,7 @@ class _CollectionWidgetState extends State<CollectionWidget> {
         child: CupertinoPicker(
             itemExtent: 50,
             onSelectedItemChanged: (int index) {
-              print(index);
+              // print(index);
             },
             children: sort
                 .map((e) => Center(

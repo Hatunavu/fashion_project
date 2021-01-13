@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/firebase/firebase.auth.dart';
 
 class LoginBloc {
@@ -37,12 +38,12 @@ class LoginBloc {
     return true;
   }
 
-  void singIn(
+  Future<Result> signIn(
       {String email,
       String pass,
       Function onSuccess,
       Function(String) onError}) {
-    _fireAuth.signIn(email, pass, onSuccess, onError);
+    return _fireAuth.signIn(email, pass, onSuccess, onError);
   }
 
   void dispose() {

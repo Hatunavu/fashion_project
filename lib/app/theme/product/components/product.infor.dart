@@ -52,7 +52,9 @@ class _ProductInforState extends State<ProductInfor> {
           collectionModel = response;
         });
       }
-      if (collectionModel != null && collectionModel.products.length > 0) {
+      if (collectionModel != null
+          // && collectionModel.products.length > 0
+          ) {
         if (widget.productModel != null &&
             jsonEncode(collectionModel).contains(widget.productModel.id)) {
           setState(() {

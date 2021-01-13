@@ -31,7 +31,7 @@ class _SignupWidgetState extends State<SignupWidget> {
         child: StreamBuilder(
             stream: signupBloc.emailStream,
             builder: (context, snapshot) {
-              print(snapshot.error);
+              print('snapshot.error: ${snapshot.error}');
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -263,23 +263,31 @@ class _SignupWidgetState extends State<SignupWidget> {
 
   void onSignupClicked() {
     // debugger();
-    var isValid = signupBloc.isValid(_nameController.text,
-        _emailController.text, _passController.text, _phoneController.text);
-    print('isValid $isValid');
+    var isValid = signupBloc.isValid(
+        name: _nameController.text,
+        email: _emailController.text,
+        pass: _passController.text,
+        phone: _phoneController.text);
+    print('isValid: $isValid');
     if (isValid) {
       //create user
       //loading dialog
       LoadingDialog.showLoadingDialog(context, 'Loading...');
-      signupBloc.signUp(_emailController.text, _passController.text,
-          _nameController.text, _phoneController.text, () {
-        LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-      }, (msg) {
-        //show message dialog
-        LoadingDialog.hideLoadingDialog(context);
-        MessageDialog.showMsgDialog(context, 'Sign in', msg);
-      });
+      signupBloc.signUp(
+          email: _emailController.text,
+          pass: _passController.text,
+          phone: _phoneController.text,
+          name: _nameController.text,
+          onSuccess: () {
+            LoadingDialog.hideLoadingDialog(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+          },
+          onError: (msg) {
+            //show message dialog
+            LoadingDialog.hideLoadingDialog(context);
+            MessageDialog.showMsgDialog(context, 'Sign in', msg);
+          });
     }
   }
 

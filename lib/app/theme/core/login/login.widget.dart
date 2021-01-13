@@ -1,9 +1,10 @@
 import 'dart:developer';
 
+import 'package:async/async.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:suplo_project_8_12_2020/app.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/login/login.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/components/loading.dialog.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/components/message.dialog.dart';
@@ -196,13 +197,6 @@ class _LoginWidgetState extends State<LoginWidget> {
         elevation: 5.0,
         onPressed: () {
           _onLoginClick();
-          // if (_formkey.currentState.validate()) {
-          //   print("successful");
-
-          //   return;
-          // } else {
-          //   print("UnSuccessfull");
-          // }
         },
         padding: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
@@ -315,25 +309,48 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
-  void _onLoginClick() {
+  void _onLoginClick() async {
     String email = _emailController.text;
     String pass = _passController.text;
 
     var isValid = _loginBloc.isValid(email, pass);
     if (isValid) {
+      // debugger();
       LoadingDialog.showLoadingDialog(context, 'Loading...');
-      _loginBloc.singIn(
-          email: email,
-          pass: pass,
-          onSuccess: () {
-            LoadingDialog.hideLoadingDialog(context);
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
-          },
-          onError: (msg) {
-            LoadingDialog.hideLoadingDialog(context);
-            MessageDialog.showMsgDialog(context, 'Sign in', msg);
-          });
+      Result<UserCredential> response = await _loginBloc.signIn(
+        email: email,
+        pass: pass,
+        // onSuccess: () {
+        //   LoadingDialog.hideLoadingDialog(context);
+        //   Navigator.push(
+        //       context, MaterialPageRoute(builder: (context) => HomePage()));
+        // },
+        // onError: (msg) {
+        //   LoadingDialog.hideLoadingDialog(context);
+        //   MessageDialog.showMsgDialog(context, 'Sign in', msg);
+        // }
+      );
+      if (response != null) {
+        if (response.isError) {
+          LoadingDialog.hideLoadingDialog(context);
+          MessageDialog.showMsgDialog(
+              context,
+              'Sign in',
+              response.asError.error
+                  .toString()
+                  .replaceAll('-', ' ')
+                  .toUpperCase());
+          print('error ${response.asError.error}');
+        }
+
+        print('success ${response.isValue}');
+        if (response.isValue) {
+          LoadingDialog.hideLoadingDialog(context);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
+          print('success ${response.asValue.value.user.getIdToken()}');
+        }
+      }
     }
   }
 

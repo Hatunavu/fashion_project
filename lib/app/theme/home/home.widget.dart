@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/news/new.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/account/account.widget.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/account/component/infor.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/account/component/header.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/account/component/menu.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
@@ -28,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     SearchWidget(),
     WishlistWidget(),
     CartWidget(),
-    LoginWidget()
+    AccountWidget()
   ];
 
   void _onItemTapped(int index) {

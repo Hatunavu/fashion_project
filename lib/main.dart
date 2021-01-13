@@ -12,8 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    MaterialApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'Mulish'),
         home: FutureBuilder(
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
               return Container();
             }
             if (snapshot.connectionState == ConnectionState.done) {
-              return HomePage();
+              return LoginWidget();
             }
             return Container();
           },

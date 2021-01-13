@@ -22,7 +22,7 @@ class SignupBloc {
     return isValidate;
   }
 
-  bool isValid(String name, String email, String pass, String phone) {
+  bool isValid({String name, String email, String pass, String phone}) {
     // debugger();
     print('email $email');
     bool isEmail = validateEmail(email);
@@ -58,8 +58,13 @@ class SignupBloc {
     return true;
   }
 
-  void signUp(String email, String pass, String phone, String name,
-      Function onSuccess, Function(String) onError) {
+  void signUp(
+      {String email,
+      String pass,
+      String phone,
+      String name,
+      Function onSuccess,
+      Function(String) onError}) {
     // debugger();
 
     _firAuth.signUp(email, pass, name, phone, onSuccess, onError);
