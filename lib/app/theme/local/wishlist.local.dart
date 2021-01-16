@@ -56,22 +56,4 @@ class WishlistLocal {
     }
     return wish;
   }
-
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var response = prefs.getString('wishlist');
-  //   if (response != null) {
-  //     jsonDecode(response).forEach((item) {
-  //       wishlist.add(WishlistModel.fromJson(item));
-  //     });
-  //     for (var i = 0; i < wishlist.length; i++) {
-  //       if (wishlist[i].id == wishlistModel.id) {
-  //         wishlist.removeAt(i);
-  //       }
-  //     }
-  //     wishlist.insert(0, wishlistModel);
-  //   } else {
-  //     wishlist.insert(0, wishlistModel);
-  //   }
-  //   await prefs.setString('wishlist', jsonEncode(wishlist));
-  // }
 }

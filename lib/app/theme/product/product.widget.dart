@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.bloc.dart';
@@ -251,13 +252,15 @@ class _ProductWidgetState extends State<ProductWidget> {
                           shape: RoundedRectangleBorder(
                               side: BorderSide(color: Colors.black)),
                           onPressed: () async {
+                            // cartBloc.load();
                             CartItem cartItem = CartItem(
                                 id: productModel.id,
                                 title: productModel.title,
                                 image: productModel.images.first,
                                 quantity: 1,
                                 price: productModel.price);
-                            CartLocal().saveCart(cartItem, true, false);
+                            cartBloc.addToCart(cartItem, 1);
+                            // CartLocal().saveCart(cartItem, true, false);
 
                             // bool productInCart = false;
 

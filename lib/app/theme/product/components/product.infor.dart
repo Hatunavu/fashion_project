@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/wishlist/wishlist.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/wishlist/wishlist.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/choose.color.dart';
 import 'package:suplo_project_8_12_2020/app/theme/cards/choose.size.dart';
@@ -40,28 +41,15 @@ class _ProductInforState extends State<ProductInfor> {
   didUpdateWidget(ProductInfor oldWidget) {
     // debugger();
     super.didUpdateWidget(oldWidget);
-    getLocal();
+    checkProductInWishlist();
   }
 
-  getLocal() async {
-    // debugger();
-    var response = await WishlistLocal().loadWishlist();
-    if (response != null) {
-      if (mounted) {
-        setState(() {
-          collectionModel = response;
-        });
-      }
-      if (collectionModel != null
-          // && collectionModel.products.length > 0
-          ) {
-        if (widget.productModel != null &&
-            jsonEncode(collectionModel).contains(widget.productModel.id)) {
-          setState(() {
-            _checkFavorite = true;
-          });
-        }
-      }
+  checkProductInWishlist() {
+    _checkFavorite = wishBloc.isProductInWishlist(widget.productModel.id);
+    if (mounted) {
+      setState(() {
+        _checkFavorite = _checkFavorite;
+      });
     }
   }
 
@@ -133,23 +121,24 @@ class _ProductInforState extends State<ProductInfor> {
                             });
 
                             Products products = Products(
-                              id: widget.productModel.id,
-                              title: widget.productModel.title,
-                              featuredImage: widget.productModel.images.first,
-                              price: widget.productModel.price,
-                              priceFormat: widget.productModel.priceFormat,
+                              id: widget?.productModel?.id,
+                              title: widget?.productModel?.title,
+                              featuredImage:
+                                  widget?.productModel?.images?.first,
+                              price: widget?.productModel?.price,
+                              priceFormat: widget?.productModel?.priceFormat,
                               compareAtPrice:
-                                  widget.productModel.compareAtPrice,
+                                  widget?.productModel?.compareAtPrice,
                               compareAtPriceFormat:
-                                  widget.productModel.compareAtPriceFormat,
-                              url: widget.productModel.url,
-                              handle: widget.productModel.handle,
-                              sale: widget.productModel.sale,
-                              available: widget.productModel.available,
+                                  widget?.productModel?.compareAtPriceFormat,
+                              url: widget?.productModel?.url,
+                              handle: widget?.productModel?.handle,
+                              sale: widget?.productModel?.sale,
+                              available: widget?.productModel?.available,
                             );
                             _checkFavorite == true
-                                ? WishlistLocal().saveWishlist(products, true)
-                                : WishlistLocal().saveWishlist(products, false);
+                                ? wishBloc.addWish(products, true)
+                                : wishBloc.addWish(products, false);
                           },
                           child: _checkFavorite
                               ? Icon(

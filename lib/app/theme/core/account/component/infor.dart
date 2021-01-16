@@ -19,8 +19,8 @@ class _InforWidgetState extends State<InforWidget> {
   FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   User user = FirebaseAuth.instance.currentUser;
-  String name;
-  String phone;
+  final _scaffolKey = GlobalKey<ScaffoldState>();
+
   DocumentSnapshot document;
 
   void fetchData() async {
@@ -220,16 +220,13 @@ class _InforWidgetState extends State<InforWidget> {
 
   void onUpdateClick() {
     auth.currentUser.updateEmail(emailController.text);
-    //     .signInWithEmailAndPassword(email: user.email, password: '88888888')
-    //     .then((userCredential) {
-    //   userCredential.user.updateEmail(emailController.text);
-    // });
+
     fireAuth.updateUser(
       email: emailController.text,
       name: nameController.text,
       phone: phoneController.text,
     );
-    Scaffold.of(context).showSnackBar(SnackBar(
+    _scaffolKey.currentState.showSnackBar(SnackBar(
       content: Text('Cập nhật thành công'),
       backgroundColor: Color(0xFF86744e),
       duration: Duration(seconds: 1),
@@ -246,8 +243,18 @@ class _InforWidgetState extends State<InforWidget> {
   Widget build(BuildContext context) {
     fetchData();
     return Scaffold(
+        key: _scaffolKey,
         backgroundColor: Color.fromRGBO(244, 243, 243, 1),
         appBar: AppBar(
+          leading: InkWell(
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           brightness: Brightness.light,

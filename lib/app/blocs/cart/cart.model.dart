@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 class CartModel {
   List<CartItem> items;
   int itemCount;
-  double totalPrice;
+  int totalPrice;
 
-  CartModel({this.items, this.itemCount = 0, this.totalPrice = 0.0});
+  CartModel({this.items, this.itemCount = 0, this.totalPrice = 0});
   CartModel.fromJson(Map<String, dynamic> json) {
     if (json['items'] != null) {
       items = List<CartItem>();
@@ -25,17 +27,26 @@ class CartModel {
     return data;
   }
 
-  void updateTotalPrice() {
-    this.totalPrice = this.items.fold(
-        0,
-        (previousValue, element) =>
-            previousValue + element.price * element.quantity);
+  int updateTotalPrice() {
+    this.totalPrice = 0;
+    if (items != null && items.length > 0) {
+      this.items.forEach((CartItem cartItem) {
+        this.totalPrice = cartItem.quantity * cartItem.price;
+      });
+      return this.totalPrice;
+    }
+    return 0;
   }
 
-  void updateTotalQuantity() {
-    this.itemCount = this
-        .items
-        .fold(0, (previousValue, element) => previousValue + element.quantity);
+  int updateTotalQuantity() {
+    this.itemCount = 0;
+    if (items != null && items.length > 0) {
+      this.items.forEach((CartItem cartItem) {
+        this.itemCount += cartItem.quantity;
+      });
+      return this.itemCount;
+    }
+    return 0;
   }
 }
 

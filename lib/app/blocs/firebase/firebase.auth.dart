@@ -115,4 +115,8 @@ class FireAuth {
 
     FirebaseFirestore.instance.collection('users').doc(user.uid).update(data);
   }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
 }

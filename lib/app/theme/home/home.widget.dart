@@ -27,13 +27,7 @@ class _HomePageState extends State<HomePage> {
   bool isScroll = false;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final tabs = [
-    Home(),
-    SearchWidget(),
-    WishlistWidget(),
-    CartWidget(),
-    AccountWidget()
-  ];
+  final tabs = [Home(), SearchWidget(), CartWidget(), AccountWidget()];
 
   void _onItemTapped(int index) {
     if (mounted)
@@ -124,9 +118,6 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_search, size: 15),
                   title: Text('Tìm kiếm', style: TextStyle(fontSize: 12))),
-              BottomNavigationBarItem(
-                  icon: Icon(CustomIcons.icon_wishlist, size: 15),
-                  title: Text('Yêu thích', style: TextStyle(fontSize: 12))),
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_cart, size: 15),
                   title: Text('Giỏ hàng', style: TextStyle(fontSize: 12))),

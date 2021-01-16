@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/account/component/infor.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/account/component/infor.demo.dart';
 
 class HeaderAccount extends StatefulWidget {
+  String name;
+  String phone;
+  HeaderAccount({this.name, this.phone});
   @override
   _HeaderAccountState createState() => _HeaderAccountState();
 }
@@ -52,7 +56,7 @@ class _HeaderAccountState extends State<HeaderAccount> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => InforWidget()));
+                              builder: (context) => InforWidgetDemo()));
                     },
                     padding: EdgeInsets.only(
                         left: 20, right: 15, top: 15, bottom: 15),
@@ -64,7 +68,7 @@ class _HeaderAccountState extends State<HeaderAccount> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Vu Truong Nam',
+                              widget?.name ?? '',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -74,7 +78,7 @@ class _HeaderAccountState extends State<HeaderAccount> {
                               height: 3,
                             ),
                             Text(
-                              '0366802300',
+                              widget?.phone ?? '',
                               style: TextStyle(
                                   color: Colors.black.withOpacity(.7),
                                   fontSize: 14,
@@ -149,7 +153,7 @@ class _HeaderAccountState extends State<HeaderAccount> {
                   )),
                   alignment: Alignment.center,
                   child: QrImage(
-                    data: '123456789',
+                    data: 'https://www.facebook.com/hatunavu',
                     size: (width * 0.5) - 60,
                   ),
                 ),

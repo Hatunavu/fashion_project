@@ -1,6 +1,12 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/firebase/firebase.auth.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/account/component/header.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/account/component/menu.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 
 class AccountWidget extends StatefulWidget {
   @override
@@ -8,14 +14,45 @@ class AccountWidget extends StatefulWidget {
 }
 
 class _AccountWidgetState extends State<AccountWidget> {
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  User user = FirebaseAuth.instance.currentUser;
+  DocumentSnapshot document;
+  String name;
+  String phone;
+  FireAuth fireAuth = FireAuth();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
+  }
+
+  void fetchData() async {
+    // debugger();
+    await users.doc(user.uid).get().then((value) {
+      document = value;
+      if (mounted) {
+        setState(() {
+          name = document.data()['name'];
+          phone = document.data()['phone'];
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    fetchData();
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 243, 243, 1),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            HeaderAccount(),
+            HeaderAccount(
+              name: name,
+              phone: phone,
+            ),
             MenuAccount(),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -51,7 +88,6 @@ class _AccountWidgetState extends State<AccountWidget> {
   void _onLogoutClick(context) {
     showDialog(
         context: context,
-        // barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
             title: Text('Đăng xuất'),
@@ -64,7 +100,9 @@ class _AccountWidgetState extends State<AccountWidget> {
                   child: Text('Hủy')),
               FlatButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    fireAuth.signOut();
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginWidget()));
                   },
                   child: Text('Xác nhận'))
             ],

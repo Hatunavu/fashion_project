@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/local/cart.local.dart';
+import 'package:suplo_project_8_12_2020/utilities/money.utilities.dart';
 
 class CartItemWidget extends StatefulWidget {
   CartItem cartItem;
-  CartModel cartModel;
-  bool statusSwitchPage;
-  Function getListCart;
-  CartItemWidget(
-      {this.cartModel, this.statusSwitchPage, this.getListCart, this.cartItem});
+  int quantity = 0;
+  CartItemWidget({this.cartItem, this.quantity});
   @override
   _CartItemState createState() => _CartItemState();
 }
@@ -23,82 +22,55 @@ class _CartItemState extends State<CartItemWidget> {
 
   Widget buildItemCart() {
     return Container(
-        child: widget.cartModel != null &&
-                widget.cartModel.items != null &&
-                widget.cartItem != null
-            ? Column(children: [
-                // List.generate(
-                //   widget.cartModel.items.length,
-                //   (index) =>
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  margin: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                        bottom: BorderSide(
-                            width: 1, color: Colors.black.withOpacity(.1))),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                          height: 60,
-                          width: 60,
-                          margin: EdgeInsets.only(left: 10),
-                          child: Image(
-                            image: widget?.cartItem.image != null &&
-                                    widget?.cartItem.image != ''
-                                ? NetworkImage(widget.cartItem.image)
-                                // widget?.cartModel?.items[index].image !=
-                                //             null &&
-                                //         widget?.cartModel?.items[index].image != ''
-                                //     ? NetworkImage(
-                                //         widget.cartModel.items[index].image)
-                                : Text('No result'),
-                            fit: BoxFit.cover,
-                          )),
-                      SizedBox(width: 15),
-                      Expanded(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                              // widget.cartModel?.items[index].title ??
-                              widget.cartItem.title ?? Text('Chưa có'),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 14.0),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis),
-                          SizedBox(height: 3),
-                          RichText(
-                              text: TextSpan(children: [
-                            TextSpan(
-                                text: widget.cartItem.price.toString(),
-                                // FlutterMoneyFormatter(
-                                //             amount: widget.cartItem.price
-                                //                     // widget.cartModel
-                                //                     //         .items[index].price
-                                //                     .toDouble() /
-                                //                 100)
-                                //         .output
-                                //         .withoutFractionDigits +
-                                //     'đ',
-                                style: TextStyle(
-                                    color: Color(0xFF86744e),
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14)),
-                          ]))
-                        ],
-                      )),
-                      actionCartItem(widget.cartItem)
-                    ],
-                  ),
-                )
-              ])
-            : Container());
+        child: Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+            bottom: BorderSide(width: 1, color: Colors.black.withOpacity(.1))),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+              height: 60,
+              width: 60,
+              margin: EdgeInsets.only(left: 10),
+              child: Image(
+                image: widget?.cartItem.image != null &&
+                        widget?.cartItem.image != ''
+                    ? NetworkImage(widget.cartItem.image)
+                    : Text('No result'),
+                fit: BoxFit.cover,
+              )),
+          SizedBox(width: 15),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(widget.cartItem.title ?? Text('Chưa có'),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis),
+              SizedBox(height: 3),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: MoneyFormat.formatCurrency(widget.cartItem.price),
+                    style: TextStyle(
+                        color: Color(0xFF86744e),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14)),
+              ]))
+            ],
+          )),
+          actionCartItem(widget.cartItem)
+        ],
+      ),
+    ));
   }
 
   Widget actionCartItem(CartItem cartItem) {
@@ -108,12 +80,11 @@ class _CartItemState extends State<CartItemWidget> {
       children: [
         InkWell(
           onTap: () async {
-            if (cartItem.quantity <= 1) {
-              await showAlert('Xóa sản phẩm',
-                  'Bạn có chắc muốn xóa sản phẩm này không?', cartItem);
+            if (widget.quantity > 1) {
+              cartBloc.updateItem(widget.cartItem.id, -1);
             } else {
-              await CartLocal().saveCart(cartItem, false, false);
-              widget.getListCart();
+              showAlert(
+                  'Xóa sản phẩm', 'Bạn có chắc muốn xóa sản phẩm này không?');
             }
           },
           child: Container(
@@ -139,9 +110,8 @@ class _CartItemState extends State<CartItemWidget> {
           ),
         ),
         InkWell(
-          onTap: () async {
-            await CartLocal().saveCart(cartItem, true, false);
-            widget.getListCart();
+          onTap: () {
+            cartBloc.updateItem(widget.cartItem.id, 1);
           },
           child: Container(
             width: 20,
@@ -162,7 +132,7 @@ class _CartItemState extends State<CartItemWidget> {
     );
   }
 
-  showAlert(String title, String description, CartItem cartItem) {
+  showAlert(String title, String description) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -173,13 +143,11 @@ class _CartItemState extends State<CartItemWidget> {
               FlatButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    return false;
                   },
                   child: Text('Đóng')),
               FlatButton(
-                  onPressed: () async {
-                    await CartLocal().saveCart(cartItem, false, false);
-                    widget.getListCart();
+                  onPressed: () {
+                    cartBloc.removeItem(widget.cartItem.id);
                     Navigator.pop(context);
                   },
                   child: Text('Xoá'))

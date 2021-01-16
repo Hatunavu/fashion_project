@@ -4,20 +4,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 // import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/cart/cart.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/components/cart.item.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/components/note.dart';
 import 'package:intl/intl.dart';
 import 'package:suplo_project_8_12_2020/app/theme/local/cart.local.dart';
+import 'package:suplo_project_8_12_2020/utilities/money.utilities.dart';
 
 class CartWidget extends StatefulWidget {
-  // CartModel cartModel;
-  // CartWidget({this.cartModel});
-  // final bool statusSwitchPage;
   final bool notBack;
-  CartWidget({this.notBack}
-      // {this.statusSwitchPage}
-      );
+  CartWidget({this.notBack});
   @override
   _CartWidgetState createState() => _CartWidgetState();
 }
@@ -48,49 +45,60 @@ class _CartWidgetState extends State<CartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // debugger();
     return Scaffold(
-      backgroundColor: Color.fromRGBO(244, 243, 243, 1),
-      appBar: AppBar(
-        brightness: Brightness.light,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: widget.notBack == false
-            ? Container(
-                width: 50,
-                height: 35,
-                alignment: Alignment.center,
-                child: FlatButton(
-                    padding: EdgeInsets.only(left: 10, right: 15),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.arrow_back, color: Colors.black)),
-              )
-            : Container(),
-        titleSpacing: 0,
-        title: Text('Giỏ hàng của tôi',
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black)),
-      ),
-      body: Stack(
-        children: [
-          cartModel != null && cartModel?.items != null
-              ? buildListItemCart(cartModel.items)
+        backgroundColor: Color.fromRGBO(244, 243, 243, 1),
+        appBar: AppBar(
+          brightness: Brightness.light,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: widget.notBack == false
+              ? Container(
+                  width: 50,
+                  height: 35,
+                  alignment: Alignment.center,
+                  child: FlatButton(
+                      padding: EdgeInsets.only(left: 10, right: 15),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.arrow_back, color: Colors.black)),
+                )
               : Container(),
-          //buildEmptyCart(),
-          /*buildCartBottom(widthDevice)*/
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [buildCartBottom()],
-          )
-        ],
-      ),
-    );
+          titleSpacing: 0,
+          title: Text('Giỏ hàng của tôi',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black)),
+        ),
+        body: StreamBuilder(
+          stream: cartBloc.cart,
+          builder: (context, AsyncSnapshot<CartModel> snapshot) {
+            if (snapshot.data?.items != null &&
+                snapshot.data.items.length > 0) {
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  buildListItemCart(snapshot.data.items),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [buildCartBottom(snapshot.data)],
+                  )
+                ],
+              );
+            } else {
+              return Stack(fit: StackFit.expand, children: [
+                buildEmptyCart(),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [buildCartBottom(snapshot.data)],
+                )
+              ]);
+            }
+          },
+        ));
   }
 
   Widget buildEmptyCart() {
@@ -123,12 +131,7 @@ class _CartWidgetState extends State<CartWidget> {
     ]);
   }
 
-  Widget buildCartBottom() {
-    // FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
-    //     amount: cartModel?.totalPrice != null
-    //         ? cartModel.totalPrice.toDouble() / 100
-    //         : 0);
-    // MoneyFormatterOutput fo = fmf.output;
+  Widget buildCartBottom(CartModel cartModel) {
     return Stack(
       children: [
         Positioned(
@@ -204,7 +207,10 @@ class _CartWidgetState extends State<CartWidget> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('${cartModel?.itemCount ?? 0}',
+                        Text(
+                            (cartModel != null && cartModel.itemCount != null)
+                                ? cartModel.itemCount.toString()
+                                : '0',
                             style: TextStyle(
                                 fontWeight: FontWeight.w700, fontSize: 18)),
                         SizedBox(
@@ -217,9 +223,9 @@ class _CartWidgetState extends State<CartWidget> {
                     Text('Tạm tính:',
                         style: TextStyle(fontSize: 14, height: 1.2)),
                     Text(
-                      //fo.withoutFractionDigits + 'đ',
-                      //'${widget.cartModel.totalPrice}',
-                      '${cartModel.totalPrice}đ',
+                      (cartModel?.totalPrice != null)
+                          ? MoneyFormat.formatCurrency(cartModel.totalPrice)
+                          : '0đ',
                       style:
                           TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                     )
@@ -257,33 +263,28 @@ class _CartWidgetState extends State<CartWidget> {
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
         var tempCartItem = itemsCart[index];
-        return Column(
-            children: List.generate(
-          itemsCart.length,
-          (index) => Dismissible(
-            key: UniqueKey(),
-            direction: DismissDirection.endToStart,
-            child: Container(
-              child: CartItemWidget(
-                cartItem: itemsCart[index],
-                cartModel: cartModel,
-                getListCart: getLocal,
-              ),
+        return Dismissible(
+          key: UniqueKey(),
+          direction: DismissDirection.endToStart,
+          child: Container(
+            child: CartItemWidget(
+              cartItem: itemsCart[index],
+              quantity: tempCartItem.quantity,
             ),
-            background: Container(
-              alignment: AlignmentDirectional.centerEnd,
-              color: Color(0xFFe54f40),
-              padding: EdgeInsets.only(right: 15),
-              child: Text('Xoá',
-                  style: TextStyle(color: Colors.white, fontSize: 14)),
-            ),
-            confirmDismiss: (direction) async {
-              final bool res = await showAlert('Xóa sản phẩm',
-                  'Bạn có chắc muốn xóa sản phẩm này không?', tempCartItem);
-              return res;
-            },
           ),
-        ));
+          background: Container(
+            alignment: AlignmentDirectional.centerEnd,
+            color: Color(0xFFe54f40),
+            padding: EdgeInsets.only(right: 15),
+            child: Text('Xoá',
+                style: TextStyle(color: Colors.white, fontSize: 14)),
+          ),
+          confirmDismiss: (direction) async {
+            final bool res = await showAlert('Xóa sản phẩm',
+                'Bạn có chắc muốn xóa sản phẩm này không?', tempCartItem);
+            return res;
+          },
+        );
       },
     );
   }
@@ -298,18 +299,18 @@ class _CartWidgetState extends State<CartWidget> {
             actions: [
               FlatButton(
                   onPressed: () {
-                    // debugger();
                     Navigator.pop(context);
                     return false;
                   },
                   child: Text('Đóng')),
-              FlatButton(
-                  onPressed: () async {
-                    await CartLocal().saveCart(cartItem, false, true);
-                    getLocal();
-                    Navigator.pop(context);
-                  },
-                  child: Text('Xoá'))
+              cartItem?.id != null
+                  ? FlatButton(
+                      onPressed: () {
+                        cartBloc.removeItem(cartItem.id);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Xoá'))
+                  : Container()
             ],
           );
         });
