@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'collection.model.dart';
 import 'package:http/http.dart' as http;
 
 class CollectionProvider {
   CollectionModel collectionData;
+  Products products;
 
   Future<CollectionModel> getModelFromApi(String url) async {
     // final url =

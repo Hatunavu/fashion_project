@@ -1,53 +1,53 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/login.event.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/login.state.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/user/user.repository.dart';
 
-import 'package:async/async.dart';
-import 'package:suplo_project_8_12_2020/app/blocs/firebase/firebase.auth.dart';
-
-class LoginBloc {
-  var _fireAuth = FireAuth();
-
-  StreamController _emailController = StreamController();
-  StreamController _passController = StreamController();
-
-  Stream get emailStream => _emailController.stream;
-  Stream get passStream => _passController.stream;
-
-  bool validateEmail(email) {
-    bool isValidate = RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+[a-zA-Z]")
-        .hasMatch(email);
-    return isValidate;
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  UserRepository _userRepository;
+  //constructor
+  LoginBloc({@required UserRepository userRepository})
+      : assert(userRepository != null),
+        _userRepository = userRepository,
+        super(LoginState.initial());
+  //Give 2 adjacent events a "debounce time"
+  @override
+  Stream<Transition<LoginEvent, LoginState>> transformEvents(
+    Stream<LoginEvent> loginEvents,
+    TransitionFunction<LoginEvent, LoginState> transitionFunction,
+  ) {
+    final debounceStream = loginEvents.where((loginEvent) {
+      return (loginEvent is LoginEventEmailChanged ||
+          loginEvent is LoginEventPasswordChanged);
+    }).debounceTime(Duration(milliseconds: 300)); //minimum 300ms for each event
+    final nonDebounceStream = loginEvents.where((loginEvent) {
+      return (loginEvent is! LoginEventEmailChanged &&
+          loginEvent is! LoginEventPasswordChanged);
+    });
+    return super.transformEvents(
+        nonDebounceStream.mergeWith([debounceStream]), transitionFunction);
   }
 
-  bool isValid(String email, String pass) {
-    bool isEmail = validateEmail(email);
-    if (email == null || email.length == 0) {
-      _emailController.sink.addError('Input email');
-      return false;
-    }
-    if (!isEmail) {
-      _emailController.sink.addError("Invalid email");
-      return false;
-    }
-    _emailController.sink.add('');
-    if (pass == null || pass.length == 0) {
-      _passController.sink.addError('Input password');
-      return false;
-    }
-    _passController.sink.add('');
-    return true;
-  }
+  @override
+  Stream<LoginState> mapEventToState(LoginEvent loginEvent) async* {
+    final loginState = state; //for easier to read code purpose !
+    if (loginEvent is LoginEventEmailChanged) {
+      yield loginState.cloneAndUpdate();
+      // isValidEmail: Validators.isValidEmail(loginEvent.email));
+    } else if (loginEvent is LoginEventPasswordChanged) {
+      yield loginState.cloneAndUpdate();
+      // isValidPassword: Validators.isValidPassword(loginEvent.password));
 
-  Future<Result> signIn(
-      {String email,
-      String pass,
-      Function onSuccess,
-      Function(String) onError}) {
-    return _fireAuth.signIn(email, pass, onSuccess, onError);
-  }
-
-  void dispose() {
-    _emailController.close();
-    _passController.close();
+    } else if (loginEvent is LoginEventWithEmailAndPasswordPressed) {
+      try {
+        await _userRepository.signInWithEmailAndPassword(
+            loginEvent.email, loginEvent.password);
+        yield LoginState.success();
+      } catch (_) {
+        yield LoginState.failure();
+      }
+    }
   }
 }

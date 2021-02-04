@@ -46,20 +46,6 @@ class FireAuth {
       String phone,
       Function onSuccess,
       Function(String) onRegisterError}) {
-    // debugger();
-
-    // add to realtime firebase
-
-    // var user = Map<String, String>();
-    // user["name"] = name;
-    // user["phone"] = phone;
-
-    // var ref = FirebaseDatabase.instance.reference().child("users");
-    // ref.child(userId).set(user).then((vl) {
-    //   print("on value: SUCCESSED");
-    //   onSuccess();
-    // }
-
     //add to cloud firstore
     Map<String, dynamic> user = {"email": email, "name": name, "phone": phone};
     CollectionReference collectionReference =

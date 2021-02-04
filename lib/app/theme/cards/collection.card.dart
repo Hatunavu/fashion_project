@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 
@@ -7,6 +10,7 @@ class CollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // debugger();
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
@@ -14,7 +18,12 @@ class CollectionCard extends StatelessWidget {
         aspectRatio: 1.57 / 3,
         child: Column(
           children: [
-            Image.network(product.featuredImage),
+            // Image.network(product.featuredImage),
+            CachedNetworkImage(
+                imageUrl: product.featuredImage,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    CircularProgressIndicator(value: downloadProgress.progress),
+                errorWidget: (context, url, error) => Icon(Icons.error)),
             Container(
               padding: EdgeInsets.only(left: 10, right: 10, top: 10),
               child: Column(

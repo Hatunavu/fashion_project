@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/account/component/infor.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/account/component/infor.demo.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/profile/profile.widget.dart';
 
 class HeaderAccount extends StatefulWidget {
   String name;
@@ -56,7 +55,7 @@ class _HeaderAccountState extends State<HeaderAccount> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => InforWidgetDemo()));
+                              builder: (context) => ProfileWidget()));
                     },
                     padding: EdgeInsets.only(
                         left: 20, right: 15, top: 15, bottom: 15),

@@ -1,36 +1,150 @@
-import 'dart:developer';
-
 import 'package:async/async.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:meta/meta.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.event.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/login/login.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/login.event.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/login.state.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/validator/login.validation.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/register/register.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/user/user.repository.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/account/account.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/components/loading.dialog.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/components/message.dialog.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/login/components/signup.widget.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/login/register.widget.dart';
 import 'package:suplo_project_8_12_2020/utilities/constants.dart';
 
 class LoginWidget extends StatefulWidget {
+  final UserRepository _userRepository;
+  //constructor
+  LoginWidget({Key key, @required UserRepository userRepository})
+      : assert(userRepository != null),
+        _userRepository = userRepository,
+        super(key: key);
+
   @override
-  _LoginWidgetState createState() => _LoginWidgetState();
+  State<StatefulWidget> createState() => _LoginWidgetState();
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  LoginValidation _loginValidation = LoginValidation();
+
   bool _rememberMe = false;
   bool _showPass = false;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
-  LoginBloc _loginBloc = LoginBloc();
+  LoginBloc _loginBloc;
+  UserRepository get _userRepository => widget._userRepository;
 
-  String _email;
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loginBloc = BlocProvider.of<LoginBloc>(context);
+    _emailController.addListener(() {
+      //when email is changed,this function is called !
+      _loginBloc.add(LoginEventEmailChanged(email: _emailController.text));
+    });
+    _passController.addListener(() {
+      //when password is changed,this function is called !
+      _loginBloc.add(LoginEventPasswordChanged(password: _passController.text));
+    });
+  }
+
+  bool get isPopulated =>
+      _emailController.text.isNotEmpty && _passController.text.isNotEmpty;
+
+  bool isLoginButtonEnabled(LoginState loginState) =>
+      loginState.isValidEmailAndPassword & isPopulated &&
+      !loginState.isSubmitting;
 
   void onToggleShowPass() {
     setState(() {
       _showPass = !_showPass;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomPadding: true,
+        body:
+            BlocBuilder<LoginBloc, LoginState>(builder: (context, loginState) {
+          if (loginState.isFailure) {
+            print('Login failed');
+          } else if (loginState.isSubmitting) {
+            print('Logging in');
+          } else if (loginState.isSuccess) {
+            //add event: AuthenticationEventLoggedIn ?
+            BlocProvider.of<AuthenticationBloc>(context)
+                .add(AuthenticationEventLoggedIn());
+          }
+          return GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  decoration:
+                      BoxDecoration(color: Color.fromRGBO(244, 243, 243, 1)),
+                ),
+                Container(
+                  height: height,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 30,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Sign In',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        _buildEmailTF(),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        _buildPasswordTF(),
+                        _buildForgotPasswordBtn(),
+                        _buildRememberMeCheckbox(),
+                        _buildLoginBtn(loginState),
+                        _buildSignInWithText(),
+                        _buildSocialBtnRow(),
+                        _buildSignupBtn(),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        }));
+  }
+
+  void _onLoginClick() async {
+    String email = _emailController.text;
+    String pass = _passController.text;
+
+    var isValid = _loginValidation.isValid(email, pass);
+    if (isValid) {
+      _loginBloc.add(LoginEventWithEmailAndPasswordPressed(
+          email: _emailController.text, password: _passController.text));
+    }
   }
 
   Widget _buildEmailTF() {
@@ -43,7 +157,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         ),
         SizedBox(height: 10.0),
         StreamBuilder(
-          stream: _loginBloc.emailStream,
+          stream: _loginValidation.emailStream,
           builder: (context, snapshot) => Column(
             children: [
               Container(
@@ -95,7 +209,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           alignment: AlignmentDirectional.centerEnd,
           children: [
             StreamBuilder(
-              stream: _loginBloc.passStream,
+              stream: _loginValidation.passStream,
               builder: (context, snapshot) => Column(
                 children: [
                   Container(
@@ -148,6 +262,31 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
+  Widget _buildLoginBtn(LoginState loginState) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: _onLoginClick,
+        padding: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'LOGIN',
+          style: TextStyle(
+            color: Colors.black,
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildForgotPasswordBtn() {
     return Container(
       alignment: Alignment.centerRight,
@@ -185,33 +324,6 @@ class _LoginWidgetState extends State<LoginWidget> {
             style: kLabelStyle,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLoginBtn() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      width: double.infinity,
-      child: RaisedButton(
-        elevation: 5.0,
-        onPressed: () {
-          _onLoginClick();
-        },
-        padding: EdgeInsets.all(10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        color: Colors.white,
-        child: Text(
-          'LOGIN',
-          style: TextStyle(
-            color: Color(0xFF86744e),
-            letterSpacing: 1.5,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }
@@ -281,8 +393,16 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget _buildSignupBtn() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignupWidget()));
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) {
+            return BlocProvider<RegisterBloc>(
+                create: (context) =>
+                    RegisterBloc(userRepository: _userRepository),
+                child: RegisterWidget(userRepository: _userRepository));
+          }),
+        );
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => SignupWidget()));
       },
       child: RichText(
         text: TextSpan(
@@ -303,105 +423,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.underline),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _onLoginClick() async {
-    String email = _emailController.text;
-    String pass = _passController.text;
-
-    var isValid = _loginBloc.isValid(email, pass);
-    if (isValid) {
-      // debugger();
-      LoadingDialog.showLoadingDialog(context, 'Loading...');
-      Result<UserCredential> response = await _loginBloc.signIn(
-        email: email,
-        pass: pass,
-        // onSuccess: () {
-        //   LoadingDialog.hideLoadingDialog(context);
-        //   Navigator.push(
-        //       context, MaterialPageRoute(builder: (context) => HomePage()));
-        // },
-        // onError: (msg) {
-        //   LoadingDialog.hideLoadingDialog(context);
-        //   MessageDialog.showMsgDialog(context, 'Sign in', msg);
-        // }
-      );
-      if (response != null) {
-        if (response.isError) {
-          LoadingDialog.hideLoadingDialog(context);
-          MessageDialog.showMsgDialog(
-              context,
-              'Sign in',
-              response.asError.error
-                  .toString()
-                  .replaceAll('-', ' ')
-                  .toUpperCase());
-          print('error ${response.asError.error}');
-        }
-
-        print('success ${response.isValue}');
-        if (response.isValue) {
-          LoadingDialog.hideLoadingDialog(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
-          print('success ${response.asValue.value.user.getIdToken()}');
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              decoration:
-                  BoxDecoration(color: Color.fromRGBO(244, 243, 243, 1)),
-            ),
-            Container(
-              height: height,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 30,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Sign In',
-                      style: TextStyle(
-                        color: Color(0xFF86744e),
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    _buildEmailTF(),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    _buildPasswordTF(),
-                    _buildForgotPasswordBtn(),
-                    _buildRememberMeCheckbox(),
-                    _buildLoginBtn(),
-                    _buildSignInWithText(),
-                    _buildSocialBtnRow(),
-                    _buildSignupBtn(),
-                  ],
-                ),
-              ),
-            )
           ],
         ),
       ),

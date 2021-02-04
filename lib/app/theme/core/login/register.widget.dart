@@ -1,35 +1,144 @@
+//something like "LoginPage" !
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:suplo_project_8_12_2020/app/blocs/login/signup.bloc.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/login/components/loading.dialog.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/login/components/message.dialog.dart';
-import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
-import 'package:suplo_project_8_12_2020/utilities/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.event.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/validator/signup.validation.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/register/register.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/register/register.event.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/register/register.state.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/user/user.repository.dart';
 
-class SignupWidget extends StatefulWidget {
-  @override
-  _SignupWidgetState createState() => _SignupWidgetState();
+class RegisterWidget extends StatefulWidget {
+  final UserRepository _userRepository;
+  RegisterWidget({Key key, @required UserRepository userRepository})
+      : assert(userRepository != null),
+        _userRepository = userRepository,
+        super(key: key);
+
+  State<RegisterWidget> createState() => _RegisterWidget();
 }
 
-class _SignupWidgetState extends State<SignupWidget> {
-  SignupBloc signupBloc = SignupBloc();
-  bool _showPass = false;
+class _RegisterWidget extends State<RegisterWidget> {
+  UserRepository get _userRepository => widget._userRepository;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
+  RegisterBloc _registerBloc;
+  SignupValidation signupValidation = SignupValidation();
+  bool _showPass = false;
+
+  bool get isPopulated =>
+      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+
+  bool isRegisterButtonEnabled(RegisterState state) {
+    return state.isValidEmailAndPassword && isPopulated && !state.isSubmitting;
+  }
+
+  void onToggleShowPass() {
+    setState(() {
+      _showPass = !_showPass;
+    });
+  }
+
   @override
-  void dispose() {
-    signupBloc.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _registerBloc = BlocProvider.of<RegisterBloc>(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body: BlocProvider<RegisterBloc>(
+        create: (context) => RegisterBloc(userRepository: _userRepository),
+        child: BlocBuilder<RegisterBloc, RegisterState>(
+          builder: (context, registerState) {
+            if (registerState.isFailure) {
+              print('Registration Failed');
+            } else if (registerState.isSubmitting) {
+              print('Registration in progress...');
+            } else if (registerState.isSuccess) {
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(AuthenticationEventLoggedIn());
+            }
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    decoration:
+                        BoxDecoration(color: Color.fromRGBO(244, 243, 243, 1)),
+                  ),
+                  Container(
+                    height: height,
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          left: 40, right: 40, top: 100, bottom: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          _buildEmail('Email'),
+                          _buildName('Full Name'),
+                          _buildPhone('Phone Number'),
+                          _buildPass('Password'),
+                          _buildSignUpBtn(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Log in',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildEmail(String content) {
     return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: StreamBuilder(
-            stream: signupBloc.emailStream,
+            stream: signupValidation.emailStream,
             builder: (context, snapshot) {
               print('snapshot.error: ${snapshot.error}');
               return Column(
@@ -52,14 +161,14 @@ class _SignupWidgetState extends State<SignupWidget> {
                     child: TextField(
                       controller: _emailController,
                       style: TextStyle(
-                        color: Color(0xFF86744e),
+                        color: Colors.black,
                       ),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.all(10),
                           hintText: content,
                           hintStyle: TextStyle(
-                            color: Color(0xFF86744e).withOpacity(.4),
+                            color: Colors.black.withOpacity(.4),
                           )),
                     ),
                   ),
@@ -79,7 +188,7 @@ class _SignupWidgetState extends State<SignupWidget> {
     return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: StreamBuilder(
-          stream: signupBloc.nameStream,
+          stream: signupValidation.nameStream,
           builder: (context, snapshot) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -100,14 +209,14 @@ class _SignupWidgetState extends State<SignupWidget> {
                 child: TextField(
                   controller: _nameController,
                   style: TextStyle(
-                    color: Color(0xFF86744e),
+                    color: Colors.black,
                   ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(10),
                     hintText: content,
                     hintStyle: TextStyle(
-                      color: Color(0xFF86744e).withOpacity(.4),
+                      color: Colors.black.withOpacity(.4),
                     ),
                   ),
                 ),
@@ -131,7 +240,7 @@ class _SignupWidgetState extends State<SignupWidget> {
         alignment: AlignmentDirectional.centerEnd,
         children: [
           StreamBuilder(
-            stream: signupBloc.passStream,
+            stream: signupValidation.passStream,
             builder: (context, snapshot) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -150,9 +259,9 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                   height: 50,
                   child: TextField(
-                    controller: _passController,
+                    controller: _passwordController,
                     style: TextStyle(
-                      color: Color(0xFF86744e),
+                      color: Colors.black,
                     ),
                     obscureText: !_showPass,
                     decoration: InputDecoration(
@@ -160,7 +269,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                         contentPadding: EdgeInsets.all(10),
                         hintText: content,
                         hintStyle: TextStyle(
-                          color: Color(0xFF86744e).withOpacity(.4),
+                          color: Colors.black.withOpacity(.4),
                         )),
                   ),
                 ),
@@ -181,7 +290,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                 child: Text(
                   _showPass ? 'HIDE' : 'SHOW',
                   style: TextStyle(
-                      color: Colors.brown,
+                      color: Colors.black,
                       fontSize: 12,
                       fontWeight: FontWeight.bold),
                 )),
@@ -195,7 +304,7 @@ class _SignupWidgetState extends State<SignupWidget> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: StreamBuilder(
-        stream: signupBloc.phoneStream,
+        stream: signupValidation.phoneStream,
         builder: (context, snapshot) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -216,7 +325,7 @@ class _SignupWidgetState extends State<SignupWidget> {
               child: TextField(
                 controller: _phoneController,
                 style: TextStyle(
-                  color: Color(0xFF86744e),
+                  color: Colors.black,
                 ),
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -224,7 +333,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                     hintText: content,
                     errorText: snapshot.hasError ? snapshot.error : null,
                     hintStyle: TextStyle(
-                      color: Color(0xFF86744e).withOpacity(.4),
+                      color: Colors.black.withOpacity(.4),
                     )),
               ),
             ),
@@ -234,7 +343,7 @@ class _SignupWidgetState extends State<SignupWidget> {
     );
   }
 
-  Widget _buildLoginBtn() {
+  Widget _buildSignUpBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       width: double.infinity,
@@ -247,7 +356,7 @@ class _SignupWidgetState extends State<SignupWidget> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        color: Color(0xFF86744e),
+        color: Colors.black,
         child: Text(
           'Sign Up',
           style: TextStyle(
@@ -263,104 +372,20 @@ class _SignupWidgetState extends State<SignupWidget> {
 
   void onSignupClicked() {
     // debugger();
-    var isValid = signupBloc.isValid(
+    var isValid = signupValidation.isValid(
         name: _nameController.text,
         email: _emailController.text,
-        pass: _passController.text,
+        pass: _passwordController.text,
         phone: _phoneController.text);
-    print('isValid: $isValid');
     if (isValid) {
-      //create user
-      //loading dialog
-      LoadingDialog.showLoadingDialog(context, 'Loading...');
-      signupBloc.signUp(
-          email: _emailController.text,
-          pass: _passController.text,
-          phone: _phoneController.text,
-          name: _nameController.text,
-          onSuccess: () {
-            LoadingDialog.hideLoadingDialog(context);
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
-          },
-          onError: (msg) {
-            //show message dialog
-            LoadingDialog.hideLoadingDialog(context);
-            MessageDialog.showMsgDialog(context, 'Sign in', msg);
-          });
+      _registerBloc.add(
+        RegisterEventPressed(
+            email: _emailController.text,
+            password: _passwordController.text,
+            name: _nameController.text,
+            phone: _phoneController.text),
+      );
+      Navigator.of(context).pop();
     }
-  }
-
-  void onToggleShowPass() {
-    setState(() {
-      _showPass = !_showPass;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              decoration:
-                  BoxDecoration(color: Color.fromRGBO(244, 243, 243, 1)),
-            ),
-            Container(
-              height: height,
-              child: SingleChildScrollView(
-                padding:
-                    EdgeInsets.only(left: 40, right: 40, top: 100, bottom: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: Color(0xFF86744e),
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    _buildEmail('Email'),
-                    _buildName('Full Name'),
-                    _buildPhone('Phone Number'),
-                    _buildPass('Password'),
-                    _buildLoginBtn(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Log in',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
   }
 }

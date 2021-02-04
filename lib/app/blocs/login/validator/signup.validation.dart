@@ -3,8 +3,8 @@ import 'dart:developer';
 
 import 'package:suplo_project_8_12_2020/app/blocs/firebase/firebase.auth.dart';
 
-class SignupBloc {
-  var _firAuth = FireAuth();
+class SignupValidation {
+  // var _firAuth = FireAuth();
 
   StreamController _nameController = new StreamController();
   StreamController _emailController = new StreamController();
@@ -58,17 +58,17 @@ class SignupBloc {
     return true;
   }
 
-  void signUp(
-      {String email,
-      String pass,
-      String phone,
-      String name,
-      Function onSuccess,
-      Function(String) onError}) {
-    // debugger();
+  // void signUp(
+  //     {String email,
+  //     String pass,
+  //     String phone,
+  //     String name,
+  //     Function onSuccess,
+  //     Function(String) onError}) {
+  //   // debugger();
 
-    _firAuth.signUp(email, pass, name, phone, onSuccess, onError);
-  }
+  //   _firAuth.signUp(email, pass, name, phone, onSuccess, onError);
+  // }
 
   void dispose() {
     _nameController.close();

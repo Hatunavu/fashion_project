@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.event.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.state.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/simple_bloc_observer.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/login/login.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/news/new.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/user/user.repository.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/account/account.widget.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/account/component/infor.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/account/component/header.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/account/component/menu.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/wishlist/wishlist.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/home.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
+import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -20,6 +25,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final UserRepository _userRepository = UserRepository();
   CollectionModel collectionData;
   NewModel newData;
   ScrollController scrollController;
@@ -27,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   bool isScroll = false;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final tabs = [Home(), SearchWidget(), CartWidget(), AccountWidget()];
+  final tabs = [Home(), SearchWidget(), CartWidget(), Account()];
 
   void _onItemTapped(int index) {
     if (mounted)
@@ -105,6 +111,7 @@ class _HomePageState extends State<HomePage> {
           height: 50,
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                   icon: Icon(
@@ -129,6 +136,39 @@ class _HomePageState extends State<HomePage> {
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.grey,
             onTap: _onItemTapped,
+          ),
+        ));
+  }
+}
+
+class Account extends StatelessWidget {
+  final UserRepository _userRepository = UserRepository();
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Login with Firebase',
+        home: BlocProvider(
+          create: (context) =>
+              AuthenticationBloc(userRepository: _userRepository)
+                ..add(AuthenticationEventStarted()),
+          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, authenticationState) {
+              if (authenticationState is AuthenticationStateSuccess) {
+                return AccountWidget();
+              } else if (authenticationState is AuthenticationStateFailure) {
+                return BlocProvider<LoginBloc>(
+                  create: (context) =>
+                      LoginBloc(userRepository: _userRepository),
+                  child: LoginWidget(
+                    userRepository: _userRepository,
+                  ),
+                );
+              }
+              return Container();
+            },
           ),
         ));
   }

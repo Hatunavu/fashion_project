@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/wishlist/wishlist.bloc.dart';
@@ -23,6 +24,7 @@ class _ProductInforState extends State<ProductInfor> {
   Options options;
   bool _checkFavorite = false;
   CollectionModel collectionModel;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   final List<Color> color = [
     Colors.amberAccent,
@@ -38,14 +40,25 @@ class _ProductInforState extends State<ProductInfor> {
     super.initState();
   }
 
+  Future onSelectNotification(String payload) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Thông báo'),
+            content: Text('$payload'),
+          );
+        });
+  }
+
   didUpdateWidget(ProductInfor oldWidget) {
     // debugger();
     super.didUpdateWidget(oldWidget);
     checkProductInWishlist();
   }
 
-  checkProductInWishlist() {
-    _checkFavorite = wishBloc.isProductInWishlist(widget.productModel.id);
+  checkProductInWishlist() async {
+    _checkFavorite = await wishBloc.isProductInWishlist(widget.productModel.id);
     if (mounted) {
       setState(() {
         _checkFavorite = _checkFavorite;

@@ -1,9 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/authenication/simple_bloc_observer.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  Bloc.observer = SimpleBlocObserver();
   runApp(MyApp());
 }
 
@@ -15,17 +19,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'Mulish'),
-        home: FutureBuilder(
-          future: Firebase.initializeApp(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Container();
-            }
-            if (snapshot.connectionState == ConnectionState.done) {
-              return LoginWidget();
-            }
-            return Container();
-          },
-        ));
+        home: HomePage());
   }
 }

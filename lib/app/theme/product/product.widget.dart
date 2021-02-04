@@ -38,7 +38,12 @@ class _ProductWidgetState extends State<ProductWidget> {
   @override
   void initState() {
     getDetail();
+    // getProduct();
     super.initState();
+  }
+
+  getProduct() async {
+    await productBloc.fetchProduct(widget.products.url);
   }
 
   saveProduct(ProductModel productModel) async {
@@ -485,7 +490,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                 RichText(
                     text: TextSpan(children: [
                   TextSpan(
-                      text: widget?.products?.priceFormat + ' ' ?? 'No rsult',
+                      text: widget.products.priceFormat + ' ' ?? 'No rsult',
                       style: TextStyle(
                           color: Color(0xFF86744e),
                           fontWeight: FontWeight.w700,

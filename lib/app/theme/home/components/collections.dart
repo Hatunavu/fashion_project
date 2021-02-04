@@ -38,7 +38,7 @@ class _CollectionsWidgetState extends State<Collections> {
       });
       if (collection != null) {}
     }
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {

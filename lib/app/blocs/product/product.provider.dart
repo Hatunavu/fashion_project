@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.care.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/product/product.model.dart';
@@ -25,12 +26,12 @@ class ProductProvider {
     //     'https://suplo-fashion.myharavan.com/products/ao-khoac-da-jack-jones-core-biker.js';
     final http.Client httpClient = http.Client();
     try {
-      // debugger();
       final response = await httpClient.get(productUrl);
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body) as Map;
-        productModel = ProductModel.fromJson(responseData);
-        return productModel;
+        ProductModel product = ProductModel.fromJson(
+            response.body is Map ? response.body : jsonDecode(response.body));
+        // print(product.toJson());
+        return product;
       } else {}
     } catch (exception) {}
   }

@@ -182,7 +182,7 @@ class Variants {
     option3 = json['option3'];
     price = json['price'];
     priceFormat = json['price_format'];
-    sku = json['sku'];
+    sku = '';
     title = json['title'];
     vendor = json['vendor'];
     inventoryQuantity = json['inventory_quantity'];
