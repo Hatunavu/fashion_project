@@ -74,7 +74,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
-        resizeToAvoidBottomPadding: true,
+        // resizeToAvoidBottomPadding: true,
         body:
             BlocBuilder<LoginBloc, LoginState>(builder: (context, loginState) {
           if (loginState.isFailure) {
