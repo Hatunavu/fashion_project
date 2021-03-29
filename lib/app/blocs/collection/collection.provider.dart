@@ -9,6 +9,7 @@ class CollectionProvider {
   Products products;
 
   Future<CollectionModel> getModelFromApi(String url) async {
+    
     // final url =
     //     'https://suplo-fashion.myharavan.com/collections/all?view=smb.json';
     final http.Client httpClient = http.Client();

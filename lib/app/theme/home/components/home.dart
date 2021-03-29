@@ -10,11 +10,13 @@ import 'package:suplo_project_8_12_2020/app/blocs/news/new.model.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/collections.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/end.home.dart';
+import 'package:suplo_project_8_12_2020/app/theme/home/components/footer.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/main.slide.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/mid.prod.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/news.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/home.widget.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
+import 'package:suplo_project_8_12_2020/app/theme/home/components/footer.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -262,6 +264,7 @@ class _HomeState extends State<Home> {
           EndHome(
               link:
                   'https://suplo-fashion.myharavan.com/collections/all?view=smb.json'),
+          FooterPage(url: 'https://suplo-cafe.myharavan.com/?themeid=1000597465&view=footer.smb.json')    
                   
         ]))
       ],
