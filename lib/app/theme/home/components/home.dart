@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:footer/footer.dart';
+import 'package:footer/footer_view.dart';
 import 'package:intl/intl.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/news/new.model.dart';
@@ -259,7 +261,8 @@ class _HomeState extends State<Home> {
           ),
           EndHome(
               link:
-                  'https://suplo-fashion.myharavan.com/collections/all?view=smb.json')
+                  'https://suplo-fashion.myharavan.com/collections/all?view=smb.json'),
+                  
         ]))
       ],
     );
