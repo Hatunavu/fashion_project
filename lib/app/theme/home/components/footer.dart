@@ -38,111 +38,108 @@ class _FooterPageState extends State<FooterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(right: 12, left: 12),
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(footer?.bgImage?.image),
-                      fit: BoxFit.fitHeight)),
-              child: Column(
+        Container(
+          padding: EdgeInsets.only(right: 12, left: 12),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: NetworkImage(footer?.bgImage?.image),
+                  fit: BoxFit.fitHeight)),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        height: MediaQuery.of(context).size.width / 2.5,
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    footer?.information?.imageLogo))),
-                      )
-                    ],
-                  ),
-                  information(
-                    Icons.home,
-                    footer.information.address,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  information(
-                      Icons.phone_android, footer.information.phoneNumber),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  information(Icons.email, footer.information.email),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  titleMain(footer.menu.menuTitle),
                   Container(
-                    height: 180,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text('${menuLink[index].linkTitle}',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600)),
-                        );
-                      },
-                      itemCount: menuLink.length,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  titleMain(footer.subcribe.title),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text(
-                    footer.subcribe.description,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  TextField(
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                    decoration: InputDecoration(
-                      border: new UnderlineInputBorder(
-                          borderSide: new BorderSide(color: Colors.red)),
-                      hintText: footer.subcribe.placeholder,
-                      hintStyle: TextStyle(color: Colors.white, fontSize: 18),
-                      suffixIcon: Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      iconSocial(MdiIcons.facebook),
-                      iconSocial(MdiIcons.twitter),
-                      iconSocial(MdiIcons.instagram),
-                      iconSocial(MdiIcons.googlePlus),
-                      iconSocial(MdiIcons.youtube)
-                    ],
-                  ),
-                  titleMain(footer.gallery.title),
-                  imageSuplo()
+                    margin: EdgeInsets.only(top: 20),
+                    height: MediaQuery.of(context).size.width / 2.5,
+                    width: MediaQuery.of(context).size.width / 2.5,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image:
+                                NetworkImage(footer?.information?.imageLogo))),
+                  )
                 ],
               ),
-            ),
-          ],
-        )
+              information(
+                Icons.home,
+                footer.information.address,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              information(Icons.phone_android, footer.information.phoneNumber),
+              SizedBox(
+                height: 5,
+              ),
+              information(Icons.email, footer.information.email),
+              SizedBox(
+                height: 20,
+              ),
+              titleMain(footer.menu.menuTitle),
+              Container(
+                height: 180,
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text('${menuLink[index].linkTitle}',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
+                    );
+                  },
+                  itemCount: menuLink.length,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              titleMain(footer.subcribe.title),
+              SizedBox(
+                height: 25,
+              ),
+              Text(
+                footer.subcribe.description,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+              TextField(
+                style: TextStyle(color: Colors.white, fontSize: 18),
+                decoration: InputDecoration(
+                  border: new UnderlineInputBorder(
+                      borderSide: new BorderSide(color: Colors.red)),
+                  hintText: footer.subcribe.placeholder,
+                  hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                  suffixIcon: Icon(
+                    Icons.send,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  iconSocial(MdiIcons.facebook),
+                  iconSocial(MdiIcons.twitter),
+                  iconSocial(MdiIcons.instagram),
+                  iconSocial(MdiIcons.googlePlus),
+                  iconSocial(MdiIcons.youtube)
+                ],
+              ),
+              titleMain(footer.gallery.title),
+              imageSuplo(),
+            ],
+          ),
+        ),
+        bottomFooter(),
       ],
     );
   }
@@ -204,11 +201,48 @@ class _FooterPageState extends State<FooterPage> {
           return Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: NetworkImage(e.imgThumb), fit: BoxFit.fill)),
+                // image: DecorationImage(image: NetworkImage(e.imgThumb))
+                ),
+            // child: Image.network(),
           );
         }).toList(),
       ),
     );
+  }
+
+  Widget bottomFooter() {
+    return Container(
+        padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 20),
+        width: double.infinity,
+        height: 150,
+        color: Color.fromRGBO(72, 65, 5, 1),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Text(
+                    footer.copyrightmenu[index].title,
+                    style: TextStyle(color: Colors.white, fontSize: 22),
+                  );
+                },
+                itemCount: footer.copyrightmenu.length,
+              ),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                footer.copyrightinfor,
+                maxLines: 2,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500),
+              ),
+            ])
+          ],
+        ));
   }
 }
