@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.bloc.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.event.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/authenication/auth.state.dart';
@@ -14,6 +15,7 @@ import 'package:suplo_project_8_12_2020/app/theme/core/account/component/menu.da
 import 'package:suplo_project_8_12_2020/app/theme/core/cart/cart.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/search/search.widget.dart';
 import 'package:suplo_project_8_12_2020/app/theme/home/components/home.dart';
+import 'package:suplo_project_8_12_2020/app/theme/home/components/product.home.dart';
 import 'package:suplo_project_8_12_2020/custom_icons_icons.dart';
 import 'package:suplo_project_8_12_2020/app/theme/core/login/login.widget.dart';
 
@@ -33,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   bool isScroll = false;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final tabs = [Home(), SearchWidget(), CartWidget(), Account()];
+  final tabs = [Home(), ProductHome(), SearchWidget(), CartWidget(), Account()];
 
   void _onItemTapped(int index) {
     if (mounted)
@@ -122,6 +124,9 @@ class _HomePageState extends State<HomePage> {
                     'Trang chủ',
                     style: TextStyle(fontSize: 12),
                   )),
+              BottomNavigationBarItem(
+                  icon: Icon(MdiIcons.gridLarge, size: 15),
+                  title: Text('Sản phẩm', style: TextStyle(fontSize: 12))),
               BottomNavigationBarItem(
                   icon: Icon(CustomIcons.icon_search, size: 15),
                   title: Text('Tìm kiếm', style: TextStyle(fontSize: 12))),
