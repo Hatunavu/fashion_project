@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/menu/menu.model.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/menu/menu.provider.dart';
 
 import '../../../../custom_icons_icons.dart';
 
@@ -11,6 +15,42 @@ class ProductHome extends StatefulWidget {
 }
 
 class _ProductHomeState extends State<ProductHome> {
+  MenuModel menuModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getMenu();
+    super.initState();
+  }
+
+  getMenu() async {
+    // debugger();
+    String url = 'https://suplo-cafe.myharavan.com/?view=categories.smb.json';
+    menuModel = await MenuProvider().getMenu(url);
+    if (this.mounted) {
+      setState(() {
+        menuModel = menuModel;
+      });
+      if (menuModel != null) {}
+    }
+  }
+
+  List<String> list = [
+    'abc',
+    '123',
+    'svav',
+    'abc',
+    '123',
+    'svav',
+    'abc',
+    '123',
+    'svav',
+    'abc',
+    '123',
+    'svav',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +115,7 @@ class _ProductHomeState extends State<ProductHome> {
       body: Row(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width / 5,
+            width: MediaQuery.of(context).size.width / 6,
             color: Color.fromRGBO(244, 243, 243, 1),
             child: ListView.builder(
               itemBuilder: (context, index) {
@@ -86,7 +126,6 @@ class _ProductHomeState extends State<ProductHome> {
                             bottom: BorderSide(
                                 color: Colors.grey[400], width: 0.5))),
                     height: 100,
-                    // color: Colors.blue,
                   ),
                 );
               },
@@ -96,67 +135,78 @@ class _ProductHomeState extends State<ProductHome> {
           Expanded(
             child: Container(
               padding: EdgeInsets.all(10),
-              color: Colors.white,
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: 450,
-                    child: Card(
-                      semanticContainer: true,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // CachedNetworkImage(
-                          //   imageUrl: null,
-                          //   progressIndicatorBuilder:
-                          //       (context, url, downloadProgress) =>
-                          //           CircularProgressIndicator(
-                          //     value: downloadProgress.progress,
-                          //   ),
-                          //   errorWidget: (context, url, error) =>
-                          //       Icon(Icons.error),
-                          // ),
-                          Container(
-                            height: 100,
-                          ),
-                          Container(
-                            padding:
-                                EdgeInsets.only(left: 10, right: 10, top: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Title ',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  'price',
-                                  style: TextStyle(
-                                      color: Color(0xFF86744e),
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+              child: CustomScrollView(
+                scrollDirection: Axis.vertical,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 5,
                     ),
-                  );
-                },
+                  ),
+                  SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 1.9 / 3,
+                    ),
+                    delegate: SliverChildListDelegate(list
+                        .map((product) => InkWell(
+                              onTap: () {},
+                              child: productCard(),
+                            ))
+                        .toList()),
+                  )
+                ],
               ),
             ),
-          )
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productCard() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+              decoration: BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10))),
+              height: 80),
+          Container(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'Title ',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'price',
+                  style: TextStyle(
+                      color: Color(0xFF86744e), fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
