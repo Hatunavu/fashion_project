@@ -94,7 +94,16 @@ class _ProductHomeState extends State<ProductHome> {
           ),
           Expanded(
             child: Container(
+              padding: EdgeInsets.all(10),
               color: Colors.white,
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3),
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return Card();
+                },
+              ),
             ),
           )
         ],
