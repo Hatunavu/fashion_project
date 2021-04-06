@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../custom_icons_icons.dart';
@@ -101,7 +102,57 @@ class _ProductHomeState extends State<ProductHome> {
                     crossAxisCount: 3),
                 itemCount: 10,
                 itemBuilder: (context, index) {
-                  return Card();
+                  return Container(
+                    height: 450,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // CachedNetworkImage(
+                          //   imageUrl: null,
+                          //   progressIndicatorBuilder:
+                          //       (context, url, downloadProgress) =>
+                          //           CircularProgressIndicator(
+                          //     value: downloadProgress.progress,
+                          //   ),
+                          //   errorWidget: (context, url, error) =>
+                          //       Icon(Icons.error),
+                          // ),
+                          Container(
+                            height: 100,
+                          ),
+                          Container(
+                            padding:
+                                EdgeInsets.only(left: 10, right: 10, top: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Title ',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  'price',
+                                  style: TextStyle(
+                                      color: Color(0xFF86744e),
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
