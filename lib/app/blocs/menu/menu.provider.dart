@@ -7,7 +7,6 @@ import 'dart:convert';
 class MenuProvider {
   MenuModel menuModel;
   Future<MenuModel> getMenu(String url) async {
-    debugger();
     final http.Client httpClient = http.Client();
     try {
       final response = await httpClient.get(url);

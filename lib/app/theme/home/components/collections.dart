@@ -19,7 +19,6 @@ class Collections extends StatefulWidget {
 
 class _CollectionsWidgetState extends State<Collections> {
   CollectionModel collection;
-  Products products;
 
   @override
   void initState() {
@@ -38,7 +37,7 @@ class _CollectionsWidgetState extends State<Collections> {
       });
       if (collection != null) {}
     }
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {

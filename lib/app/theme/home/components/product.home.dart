@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.model.dart';
+import 'package:suplo_project_8_12_2020/app/blocs/collection/collection.provider.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/menu/menu.model.dart';
 import 'package:suplo_project_8_12_2020/app/blocs/menu/menu.provider.dart';
 
@@ -10,23 +12,30 @@ import '../../../../custom_icons_icons.dart';
 class ProductHome extends StatefulWidget {
   final bool notBack;
   ProductHome({this.notBack});
+
   @override
   _ProductHomeState createState() => _ProductHomeState();
 }
 
 class _ProductHomeState extends State<ProductHome> {
   MenuModel menuModel;
+  CollectionModel collectionModel;
+  Menu sublink;
+  String link;
+  ScrollController controller = ScrollController();
 
   @override
   void initState() {
     // TODO: implement initState
     getMenu();
+
     super.initState();
   }
 
   getMenu() async {
     // debugger();
-    String url = 'https://suplo-cafe.myharavan.com/?view=categories.smb.json';
+    String url =
+        'https://suplo-cafe.myharavan.com/?themeid=1000597465&view=categories.smb.json';
     menuModel = await MenuProvider().getMenu(url);
     if (this.mounted) {
       setState(() {
@@ -36,20 +45,16 @@ class _ProductHomeState extends State<ProductHome> {
     }
   }
 
-  List<String> list = [
-    'abc',
-    '123',
-    'svav',
-    'abc',
-    '123',
-    'svav',
-    'abc',
-    '123',
-    'svav',
-    'abc',
-    '123',
-    'svav',
-  ];
+  getCollection(link) async {
+    collectionModel = await CollectionProvider().getModelFromApi(link);
+    if (this.mounted) {
+      setState(() {
+        collectionModel = collectionModel;
+      });
+
+      if (collectionModel != null) {}
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,19 +123,50 @@ class _ProductHomeState extends State<ProductHome> {
             width: MediaQuery.of(context).size.width / 6,
             color: Color.fromRGBO(244, 243, 243, 1),
             child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Container(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: Colors.grey[400], width: 0.5))),
-                    height: 100,
-                  ),
-                );
-              },
-              itemCount: 10,
-            ),
+                controller: controller,
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                  color: Colors.grey[400], width: 0.5))),
+                      height: 100,
+                      child: InkWell(
+                        onTap: () {
+                          // debugger();
+                          if (menuModel.menu[index].subLink.isEmpty &&
+                              menuModel.menu[index].link != null) {
+                            setState(() {
+                              link = menuModel.menu[index].link;
+                              getCollection(link);
+                              sublink = null;
+                            });
+                          } else {
+                            setState(() {
+                              link = '';
+                              sublink = menuModel?.menu[index] ?? [];
+                            });
+                          }
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            // Container(
+                            //   child: Image.network(
+                            //       menuModel?.menu[index]?.collectionImage ?? ''),
+                            // ),
+                            Text(
+                              menuModel?.menu[index]?.title ?? '',
+                              style: TextStyle(fontSize: 12),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                itemCount: menuModel?.menu?.length ?? 0),
           ),
           Expanded(
             child: Container(
@@ -144,17 +180,28 @@ class _ProductHomeState extends State<ProductHome> {
                     ),
                   ),
                   SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 1.9 / 3,
-                    ),
-                    delegate: SliverChildListDelegate(list
-                        .map((product) => InkWell(
-                              onTap: () {},
-                              child: productCard(),
-                            ))
-                        .toList()),
-                  )
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.9 / 3,
+                      ),
+                      delegate: sublink == null
+                          ? SliverChildListDelegate(collectionModel != null &&
+                                  collectionModel.products.isNotEmpty
+                              ? collectionModel.products
+                                  .map((product) => InkWell(
+                                        onTap: () {},
+                                        child: productCard(product),
+                                      ))
+                                  .toList()
+                              : [])
+                          : SliverChildListDelegate(sublink != null
+                              ? sublink.subLink
+                                  .map((sublink) => InkWell(
+                                        onTap: () {},
+                                        child: subLink(sublink),
+                                      ))
+                                  .toList()
+                              : []))
                 ],
               ),
             ),
@@ -164,7 +211,7 @@ class _ProductHomeState extends State<ProductHome> {
     );
   }
 
-  Widget productCard() {
+  Widget productCard(Products products) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(
@@ -172,7 +219,9 @@ class _ProductHomeState extends State<ProductHome> {
         children: [
           Container(
               decoration: BoxDecoration(
-                  color: Colors.amber,
+                  image: DecorationImage(
+                      image: NetworkImage(products.featuredImage),
+                      fit: BoxFit.cover),
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
@@ -187,7 +236,7 @@ class _ProductHomeState extends State<ProductHome> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Title ',
+                        '${products.title} ',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -200,11 +249,38 @@ class _ProductHomeState extends State<ProductHome> {
                   height: 5,
                 ),
                 Text(
-                  'price',
+                  '${products.priceFormat}',
                   style: TextStyle(
                       color: Color(0xFF86744e), fontWeight: FontWeight.bold),
                 )
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget subLink(SubLink sublink) {
+    // debugger();
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10))),
+              height: 80),
+          Container(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+            child: Text(
+              '${sublink.title} ',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ),
         ],
