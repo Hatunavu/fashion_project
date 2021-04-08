@@ -22,14 +22,17 @@ class _ProductHomeState extends State<ProductHome> {
   CollectionModel collectionModel;
   Menu sublink;
   String link;
-  ScrollController controller = ScrollController();
+  ScrollController controller;
 
   @override
   void initState() {
-    // TODO: implement initState
     getMenu();
-
     super.initState();
+  }
+
+  _scrollListener() {
+    debugger();
+    controller.jumpTo(controller?.position?.maxScrollExtent ?? 0);
   }
 
   getMenu() async {
@@ -144,7 +147,6 @@ class _ProductHomeState extends State<ProductHome> {
                             });
                           } else {
                             setState(() {
-                              link = '';
                               sublink = menuModel?.menu[index] ?? [];
                             });
                           }
